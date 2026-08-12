@@ -1,0 +1,32 @@
+# dependencies
+node_modules/
+.node_modules.lock
+
+# local / generated
+.tanstack/
+.vercel/
+.output/
+dist/
+*.log
+*.local
+
+# env
+.env
+.env.*
+!.env.example
+
+# databases
+.pglite/
+*.sqlite
+*.sqlite3
+
+# sandbox / agent-only (not part of the product)
+.grok/
+artifacts/
+screenshots/
+attachments/
+AGENTS.md
+
+# os
+.DS_Store
+Thumbs.db

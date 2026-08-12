@@ -1,0 +1,27 @@
+spec: pdf-frontmatter/0.1
+title: Supply agreement -- REISIERX Lda and Nortevale Comercio S.A.
+doc_type: contract
+language: en
+pages: 8
+summary: >
+  Three-year supply of archival paper goods between REISIERX Lda (Lisbon) and Nortevale Comercio S.A. (Porto). Liability cap and termination terms are the sensitive clauses.
+key_sections:
+  parties: 1
+  schedule_a: 2
+  delivery: 3
+  liability_cap: 4
+  termination: 5
+  confidentiality: 6
+  fees: 7
+  signatures: 8
+entities:
+  - REISIERX Lda
+  - Nortevale Comercio S.A.
+  - Ines Vale
+  - Rui Mota
+extraction:
+  scanned: false
+  tables_on_pages: [2, 7]
+content_sha256: afed9916a8e82b7f
+generated_by: pdf-frontmatter-samples/0.1
+generated_at: 2026-08-13
