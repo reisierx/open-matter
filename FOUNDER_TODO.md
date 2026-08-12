@@ -4,9 +4,9 @@ Numbered. One action each. Nothing here needs a terminal.
 
 ## 1. Make the code public — done
 
-Public repository: [https://github.com/goncalo-reisierx/pdf-frontmatter](https://github.com/goncalo-reisierx/pdf-frontmatter)
+Public repository: [https://github.com/reisierx/pdf-frontmatter](https://github.com/reisierx/pdf-frontmatter)
 
-On your personal account. An organisation named `pdf-frontmatter` can wait. In the repository settings, tick **Issues** if it is not already on, and leave the repo public.
+On the **reisierx** organisation (the connection can write there). The empty personal repo at `goncalo-reisierx/pdf-frontmatter` can be deleted. In the repository settings, tick **Issues** if it is not already on, and leave the repo public.
 
 ## 2. Buy the names
 

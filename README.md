@@ -4,7 +4,7 @@ When an agent opens a PDF it has to read the whole file just to learn what it is
 
 This is a **carrier**, not a representation. [DocLang](https://doclang.ai) describes what a machine-readable document looks like. pdf-frontmatter describes where that data lives so it never gets separated from the file that circulates.
 
-Repository: [github.com/goncalo-reisierx/pdf-frontmatter](https://github.com/goncalo-reisierx/pdf-frontmatter)
+Repository: [github.com/reisierx/pdf-frontmatter](https://github.com/reisierx/pdf-frontmatter)
 
 - Spec: [`spec/pdf-frontmatter-0.1.md`](spec/pdf-frontmatter-0.1.md) (CC0)
 - TypeScript: [`packages/pdf-frontmatter`](packages/pdf-frontmatter) (MIT)
