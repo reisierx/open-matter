@@ -1,5 +1,5 @@
 import { parse, stringify, YAMLParseError } from "yaml";
-import { DOC_TYPES, SPEC_ID, type Manifest } from "./schema";
+import { ACCEPTED_SPEC_IDS, DOC_TYPES, SPEC_ID, type Manifest } from "./schema";
 
 /** Parse YAML into a plain object. Throws a human-readable Error on failure. */
 export function parseYaml(source: string): unknown {
@@ -33,7 +33,7 @@ export type Validation =
   | { ok: false; error: string };
 
 /**
- * Validate a parsed object as a pdf-frontmatter/0.1 manifest.
+ * Validate a parsed object as an open-matter/0.1 manifest.
  * Unknown keys are kept. Only `spec` and `title` are required.
  */
 export function validateManifest(raw: unknown): Validation {
@@ -53,10 +53,10 @@ export function validateManifest(raw: unknown): Validation {
     value[k] = v;
   }
 
-  if (value.spec !== SPEC_ID) {
+  if (!ACCEPTED_SPEC_IDS.includes(value.spec as (typeof ACCEPTED_SPEC_IDS)[number])) {
     return {
       ok: false,
-      error: `The spec field must be exactly "${SPEC_ID}". This reader only understands that version.`,
+      error: `The spec field must be "${SPEC_ID}" (or the legacy "pdf-frontmatter/0.1"). This reader only understands those versions.`,
     };
   }
 

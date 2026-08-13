@@ -323,7 +323,7 @@ async function buildPlain() {
 
   pdf.setTitle("Supply Agreement - REISIERX Lda and Nortevale Comercio S.A.");
   pdf.setAuthor("REISIERX Lda");
-  pdf.setCreator("pdf-frontmatter sample factory");
+  pdf.setCreator("open-matter sample factory");
   pdf.setLanguage("en");
 
   const text = extracted.join("\n\n").trim();
@@ -339,7 +339,7 @@ async function main() {
   const hash = createHash("sha256").update(text, "utf8").digest("hex").slice(0, 16);
 
   const manifest = {
-    spec: "pdf-frontmatter/0.1",
+    spec: "open-matter/0.1",
     title: "Supply agreement -- REISIERX Lda and Nortevale Comercio S.A.",
     doc_type: "contract",
     language: "en",
@@ -359,15 +359,15 @@ async function main() {
     entities: ["REISIERX Lda", "Nortevale Comercio S.A.", "Ines Vale", "Rui Mota"],
     extraction: { scanned: false, tables_on_pages: [2, 7] },
     content_sha256: hash,
-    generated_by: "pdf-frontmatter-samples/0.1",
+    generated_by: "open-matter-samples/0.1",
     generated_at: "2026-08-13",
   };
 
   const yaml = stringifyManifest(manifest);
   const pdf = await PDFDocument.load(plain);
-  await pdf.attach(new TextEncoder().encode(yaml), "agent-frontmatter.yaml", {
+  await pdf.attach(new TextEncoder().encode(yaml), "open-matter.yaml", {
     mimeType: "application/yaml",
-    description: "pdf-frontmatter/0.1 machine-readable index card",
+    description: "open-matter/0.1 machine-readable index card",
     creationDate: new Date("2026-08-13"),
     modificationDate: new Date("2026-08-13"),
   });

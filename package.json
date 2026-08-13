@@ -1,5 +1,5 @@
 {
-  "name": "pdf-frontmatter",
+  "name": "open-matter",
   "private": true,
   "sideEffects": false,
   "type": "module",

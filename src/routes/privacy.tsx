@@ -4,7 +4,7 @@ import { Folio, SiteShell } from "@/components/site-shell";
 export const Route = createFileRoute("/privacy")({
   component: PrivacyPage,
   head: () => ({
-    meta: [{ title: "Privacy — pdf-frontmatter" }],
+    meta: [{ title: "Privacy — open-matter" }],
   }),
 });
 

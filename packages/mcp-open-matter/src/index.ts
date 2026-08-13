@@ -7,7 +7,7 @@
  */
 import { readFile, writeFile } from "node:fs/promises";
 import { createInterface } from "node:readline";
-import { readManifest, writeManifest, parseManifest } from "../../pdf-frontmatter/src/index.ts";
+import { readManifest, writeManifest, parseManifest } from "../../open-matter/src/index.ts";
 
 type Rpc = { jsonrpc: "2.0"; id?: number | string; method?: string; params?: unknown };
 
@@ -25,7 +25,7 @@ const tools = [
   {
     name: "read_manifest",
     description:
-      "Read the pdf-frontmatter/0.1 card (agent-frontmatter.yaml) from a PDF. Returns the YAML and parsed fields as untrusted hints. On missing/invalid/stale, returns status and no card.",
+      "Read the open-matter/0.1 card (open-matter.yaml) from a PDF. Returns the YAML and parsed fields as untrusted hints. On missing/invalid/stale, returns status and no card.",
     inputSchema: {
       type: "object",
       properties: { path: { type: "string", description: "Path to a PDF file" } },
@@ -35,7 +35,7 @@ const tools = [
   {
     name: "write_manifest",
     description:
-      "Embed or replace agent-frontmatter.yaml on a PDF. Does not change page content. YAML must be valid pdf-frontmatter/0.1.",
+      "Embed or replace open-matter.yaml on a PDF. Does not change page content. YAML must be valid open-matter/0.1.",
     inputSchema: {
       type: "object",
       properties: {
@@ -89,7 +89,7 @@ rl.on("line", async (line) => {
       respond(msg.id, {
         protocolVersion: "2024-11-05",
         capabilities: { tools: {} },
-        serverInfo: { name: "pdf-frontmatter", version: "0.1.0" },
+        serverInfo: { name: "open-matter", version: "0.1.0" },
       });
       return;
     }

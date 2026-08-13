@@ -8,7 +8,7 @@ export const Route = createFileRoute("/")({
   component: Home,
   head: () => ({
     meta: [
-      { title: "pdf-frontmatter — stop making AI re-read the same PDF" },
+      { title: "open-matter — stop making AI re-read the same PDF" },
       {
         name: "description",
         content:
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const SNIPPET = `import { readManifest } from "pdf-frontmatter";
+const SNIPPET = `import { readManifest } from "open-matter";
 
 const card = await readManifest(bytes);
 if (card.manifest) console.log(card.manifest.title);`;
@@ -105,7 +105,7 @@ function Home() {
           . Consume a card from any local stack:
         </p>
         <pre className="mt-3 max-w-full overflow-x-auto bg-ink p-3 text-[0.7rem] leading-relaxed text-paper">
-          {`npx mcp-pdf-frontmatter   # read_manifest / write_manifest`}
+          {`npx mcp-open-matter   # read_manifest / write_manifest`}
         </pre>
       </Folio>
 
@@ -177,10 +177,10 @@ function Home() {
             This one says where that data lives so it cannot be orphaned.
           </p>
           <a
-            href="https://github.com/reisierx/pdf-frontmatter"
+            href="https://github.com/reisierx/open-matter"
             className="mt-5 inline-block text-sm"
           >
-            github.com/reisierx/pdf-frontmatter
+            github.com/reisierx/open-matter
           </a>
         </div>
       </Folio>

@@ -1,4 +1,4 @@
-import { extractText as extractTextLite } from "pdf-frontmatter";
+import { extractText as extractTextLite } from "open-matter";
 
 export type Extracted = {
   text: string;

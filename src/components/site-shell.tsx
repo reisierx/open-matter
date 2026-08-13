@@ -17,7 +17,7 @@ export function SiteHeader({ compact = false }: { compact?: boolean }) {
       >
         <Link to="/" className="min-w-0 text-ink no-underline hover:text-ink">
           <span className="block font-display text-lg leading-none tracking-tight sm:text-xl">
-            pdf-frontmatter
+            open-matter
           </span>
           {!compact ? (
             <span className="mt-1 block font-serif text-[0.7rem] tracking-[0.14em] text-muted uppercase">
@@ -58,7 +58,7 @@ export function SiteFooter() {
             Why
           </Link>
           <a
-            href="https://github.com/reisierx/pdf-frontmatter"
+            href="https://github.com/reisierx/open-matter"
             className="text-ink-soft no-underline hover:text-oxblood"
           >
             GitHub

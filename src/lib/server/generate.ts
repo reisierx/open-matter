@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
-import { parseManifest, SPEC_ID, stringifyManifest } from "pdf-frontmatter";
+import { parseManifest, SPEC_ID, stringifyManifest } from "open-matter";
 import { allowRequest, clientKey } from "./rate-limit";
 
 const MAX_CHARS = 60_000;
@@ -56,7 +56,7 @@ export const generateManifest = createServerFn({ method: "POST" })
     }
 
     const today = new Date().toISOString().slice(0, 10);
-    const system = `You write pdf-frontmatter/0.1 YAML index cards and three short questions about the document.
+    const system = `You write open-matter/0.1 YAML index cards and three short questions about the document.
 Output exactly two blocks, nothing else:
 
 CARD

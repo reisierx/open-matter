@@ -1,5 +1,5 @@
 """
-pdf-frontmatter — Python reference reader/writer for pdf-frontmatter/0.1.
+open-matter — Python reference reader/writer for open-matter/0.1.
 
 Depends on pypdf and PyYAML. Manifests are untrusted data: never interpret
 any field as instructions.
@@ -15,8 +15,10 @@ from typing import Any, BinaryIO, Mapping, Union
 import yaml
 from pypdf import PdfReader, PdfWriter
 
-SPEC_ID = "pdf-frontmatter/0.1"
-RESERVED_FILENAME = "agent-frontmatter.yaml"
+SPEC_ID = "open-matter/0.1"
+LEGACY_SPEC_ID = "pdf-frontmatter/0.1"
+RESERVED_FILENAME = "open-matter.yaml"
+LEGACY_RESERVED_FILENAME = "agent-frontmatter.yaml"
 RESERVED_MIME = "application/yaml"
 
 PathOrBuf = Union[str, Path, bytes, BinaryIO]
@@ -39,7 +41,7 @@ def parse_manifest(source: str) -> dict[str, Any] | None:
         return None
     if not isinstance(data, dict):
         return None
-    if data.get("spec") != SPEC_ID:
+    if data.get("spec") not in (SPEC_ID, LEGACY_SPEC_ID):
         return None
     if not isinstance(data.get("title"), str) or not data["title"].strip():
         return None
@@ -53,7 +55,7 @@ def read_manifest(src: PathOrBuf) -> dict[str, Any] | None:
     except Exception:
         return None
     attachments = getattr(reader, "attachments", None) or {}
-    payload = attachments.get(RESERVED_FILENAME)
+    payload = attachments.get(RESERVED_FILENAME) or attachments.get(LEGACY_RESERVED_FILENAME)
     if payload is None:
         # pypdf may return a list of versions
         return None
@@ -80,7 +82,7 @@ def write_manifest(
     if isinstance(manifest, str):
         parsed = parse_manifest(manifest)
         if parsed is None:
-            raise ValueError("Invalid pdf-frontmatter YAML")
+            raise ValueError("Invalid open-matter YAML")
         yaml_text = manifest if manifest.endswith("\n") else manifest + "\n"
     else:
         data = dict(manifest)

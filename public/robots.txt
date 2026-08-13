@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://pdf-frontmatter.org/llms.txt
+Sitemap: https://open-matter.org/llms.txt

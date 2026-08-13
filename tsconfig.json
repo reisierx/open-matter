@@ -13,8 +13,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "pdf-frontmatter": ["./packages/pdf-frontmatter/src/index.ts"]
+      "open-matter": ["./packages/open-matter/src/index.ts"]
     }
   },
-  "include": ["src", "server", "packages/pdf-frontmatter/src"]
+  "include": ["src", "server", "packages/open-matter/src"]
 }

@@ -6,16 +6,16 @@ export const Route = createFileRoute("/spec")({
   component: SpecPage,
   head: () => ({
     meta: [
-      { title: "Specification — pdf-frontmatter/0.1" },
+      { title: "Specification — open-matter/0.1" },
       {
         name: "description",
-        content: "Normative text of pdf-frontmatter/0.1. CC0. Reserved filename agent-frontmatter.yaml.",
+        content: "Normative text of open-matter/0.1. CC0. Reserved filename open-matter.yaml.",
       },
     ],
   }),
 });
 
-const EXAMPLE = `spec: pdf-frontmatter/0.1
+const EXAMPLE = `spec: open-matter/0.1
 title: Contrato de fornecimento
 doc_type: contract
 language: pt-PT
@@ -48,7 +48,7 @@ const FAQ = [
   },
   {
     q: "Why not just DocLang?",
-    a: "DocLang is the representation: what the machine-readable version of a document looks like. pdf-frontmatter is the carrier: where that representation, or a pointer to it, lives so it cannot be orphaned. Complementary, not competing. The derived key is the bridge.",
+    a: "DocLang is the representation: what the machine-readable version of a document looks like. open-matter is the carrier: where that representation, or a pointer to it, lives so it cannot be orphaned. Complementary, not competing. The derived key is the bridge.",
   },
   {
     q: "What stops a card from lying?",
@@ -56,11 +56,11 @@ const FAQ = [
   },
   {
     q: "Does the PDF look different?",
-    a: "No. Pages are not touched. Viewers that list attachments — Acrobat, many others — show agent-frontmatter.yaml as a normal file. macOS Preview does not list attachments. Typical overhead is under a kilobyte.",
+    a: "No. Pages are not touched. Viewers that list attachments — Acrobat, many others — show open-matter.yaml as a normal file. macOS Preview does not list attachments. Typical overhead is under a kilobyte.",
   },
   {
     q: "Is this an Adobe product?",
-    a: "No. The convention is called pdf-frontmatter. The spec is CC0. The code is MIT. The app on this site is the standard’s front door, not a second brand.",
+    a: "No. The convention is called open-matter. The spec is CC0. The code is MIT. The app on this site is the standard’s front door, not a second brand.",
   },
   {
     q: "What does the app send to a model?",
@@ -103,11 +103,12 @@ function SpecPage() {
           {" · "}
           Published 13 August 2026 · CC0 1.0
         </p>
-        <h1 className="mt-2 font-display text-4xl sm:text-5xl">pdf-frontmatter / 0.1</h1>
+        <h1 className="mt-2 font-display text-4xl sm:text-5xl">open-matter / 0.1</h1>
         <p className="mt-4 max-w-2xl text-ink-soft">
           Normative text. Implementations that want to interoperate must follow
-          the sentences that say <em>must</em>. A copyable file lives at{" "}
-          <a href="/spec/pdf-frontmatter-0.1.md">/spec/pdf-frontmatter-0.1.md</a>.
+          the sentences that say <em>must</em>. Version 0.1 is the PDF profile.
+          A copyable file lives at{" "}
+          <a href="/spec/open-matter-0.1.md">/spec/open-matter-0.1.md</a>.
         </p>
         <p className="mt-4 text-sm text-muted">
           <a href="#install" className="text-ink-soft no-underline hover:text-oxblood">
@@ -139,7 +140,7 @@ function SpecPage() {
       <article className="mx-auto mt-12 max-w-3xl space-y-10 px-4 pb-20 sm:px-6">
         <Section n="1" title="What this is">
           <p>
-            pdf-frontmatter is a convention for putting a small, machine-readable
+            open-matter is a convention for putting a small, machine-readable
             index card <em>inside</em> a PDF, as a standard file attachment. An
             agent that opens the file can read the card in milliseconds and decide
             what to do next — without parsing a single page.
@@ -153,7 +154,7 @@ function SpecPage() {
           <p>
             The PDF remains a valid PDF. It looks identical in every viewer.
             Viewers that list attachments show the card as a normal file named{" "}
-            <code>agent-frontmatter.yaml</code>. Typical overhead is under 1 KB.
+            <code>open-matter.yaml</code>. Typical overhead is under 1 KB.
           </p>
         </Section>
 
@@ -165,7 +166,7 @@ function SpecPage() {
           <ul className="list-disc space-y-1 pl-5">
             <li>
               The filename <strong>must</strong> be exactly{" "}
-              <code>agent-frontmatter.yaml</code>.
+              <code>open-matter.yaml</code>.
             </li>
             <li>
               The embedded-file MIME type <strong>must</strong> be{" "}
@@ -208,7 +209,7 @@ function SpecPage() {
           <h3 className="mt-6 font-display text-xl">Required keys</h3>
           <SpecTable
             rows={[
-              ["spec", "Must be the exact string pdf-frontmatter/0.1."],
+              ["spec", "Must be the exact string open-matter/0.1."],
               ["title", "Must be a non-empty string. A short name for the document."],
             ]}
           />
@@ -306,7 +307,7 @@ function SpecPage() {
 
         <Section n="8" title="Versioning">
           <p>
-            This version is <code>pdf-frontmatter/0.1</code>. A future version
+            This version is <code>open-matter/0.1</code>. A future version
             will use a new <code>spec</code> string. Readers that do not recognise
             the value must ignore the card and fall back.
           </p>
@@ -328,11 +329,11 @@ function SpecPage() {
           <p className="text-ink-soft">
             The libraries live in the repo today. npm and PyPI names are reserved
             for v0.1.0; until that publish, copy from{" "}
-            <a href="https://github.com/reisierx/pdf-frontmatter">GitHub</a>.
+            <a href="https://github.com/reisierx/open-matter">GitHub</a>.
           </p>
           <CopyBlock
             code={`// TypeScript — from the repo
-import { readManifest } from "pdf-frontmatter";
+import { readManifest } from "open-matter";
 
 const card = await readManifest(bytes);
 if (card.manifest) {
@@ -340,8 +341,8 @@ if (card.manifest) {
 }`}
           />
           <CopyBlock
-            code={`# Python — from packages/pdf-frontmatter-py
-from pdf_frontmatter import read_manifest`}
+            code={`# Python — from packages/open-matter-py
+from open_matter import read_manifest`}
           />
         </section>
 
@@ -352,9 +353,9 @@ from pdf_frontmatter import read_manifest`}
           </h2>
           <SpecTable
             rows={[
-              ["TypeScript", "packages/pdf-frontmatter — read, write, hash, CLI."],
-              ["Python", "packages/pdf-frontmatter-py — skeleton, same reserved name."],
-              ["MCP", "packages/mcp-pdf-frontmatter — read_manifest / write_manifest (stdio)."],
+              ["TypeScript", "packages/open-matter — read, write, hash, CLI."],
+              ["Python", "packages/open-matter-py — skeleton, same reserved name."],
+              ["MCP", "packages/mcp-open-matter — read_manifest / write_manifest (stdio)."],
               ["This site", "The /app page writes cards in the browser. No account."],
             ]}
           />
@@ -370,9 +371,9 @@ from pdf_frontmatter import read_manifest`}
           </p>
           <SpecTable
             rows={[
-              ["pdf-frontmatter (TS)", "readManifest / writeManifest in this repo."],
-              ["pdf-frontmatter (Python)", "packages/pdf-frontmatter-py."],
-              ["MCP server", "npx mcp-pdf-frontmatter — read_manifest, write_manifest."],
+              ["open-matter (TS)", "readManifest / writeManifest in this repo."],
+              ["open-matter (Python)", "packages/open-matter-py."],
+              ["MCP server", "npx mcp-open-matter — read_manifest, write_manifest."],
               ["This app", "/app writes a card and races it on your file."],
               ["Loaders", "None merged yet. PRs welcome: check the card before parsing."],
             ]}
@@ -386,7 +387,7 @@ from pdf_frontmatter import read_manifest`}
           </h2>
           <p className="text-ink-soft">Self-certify. An implementation conforms to 0.1 if:</p>
           <ol className="list-decimal space-y-2 pl-5 text-ink-soft">
-            <li>The reserved filename is exactly <code>agent-frontmatter.yaml</code>.</li>
+            <li>The reserved filename is exactly <code>open-matter.yaml</code>.</li>
             <li>The MIME type is <code>application/yaml</code>.</li>
             <li>On any read failure, it falls back silently to a normal parse.</li>
             <li>Tools that rewrite a card preserve unknown keys.</li>
@@ -401,7 +402,7 @@ from pdf_frontmatter import read_manifest`}
           </h2>
           <p className="text-ink-soft">
             <strong>0.1</strong> — 13 August 2026. First public text.{" "}
-            <a href="https://github.com/reisierx/pdf-frontmatter">Source</a>.
+            <a href="https://github.com/reisierx/open-matter">Source</a>.
           </p>
         </section>
 

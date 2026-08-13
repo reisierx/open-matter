@@ -1,19 +1,19 @@
 [project]
-name = "pdf-frontmatter"
+name = "open-matter"
 version = "0.1.0"
-description = "Read and write pdf-frontmatter/0.1 manifests inside PDFs."
+description = "Read and write open-matter/0.1 manifests inside PDFs."
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"
 dependencies = ["pypdf>=5.0", "PyYAML>=6.0"]
 
 [project.urls]
-Homepage = "https://github.com/pdf-frontmatter/pdf-frontmatter"
-Specification = "https://pdf-frontmatter.org/spec"
+Homepage = "https://github.com/open-matter/open-matter"
+Specification = "https://open-matter.org/spec"
 
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-include = ["pdf_frontmatter*"]
+include = ["open_matter*"]

@@ -5,9 +5,9 @@ Link the live site. Repo in the first line of the maker comment. Never ask for u
 
 ## Title options
 
-1. Show HN: pdf-frontmatter – a 1 KB card in a PDF so agents (and local models) skip the parse
-2. Show HN: pdf-frontmatter – stop making AI re-read the same PDF
-3. Show HN: pdf-frontmatter – a 1 KB YAML card inside a PDF so agents can skip the parse
+1. Show HN: open-matter – a 1 KB card in a PDF so agents (and local models) skip the parse
+2. Show HN: open-matter – stop making AI re-read the same PDF
+3. Show HN: open-matter – a 1 KB YAML card inside a PDF so agents can skip the parse
 
 Prefer 1. An honest measured multiple is allowed if you re-check the race that morning.
 
@@ -17,12 +17,12 @@ AI already reads PDFs. It just does it from scratch every time, and the understa
 
 Prefill is wall-clock. Small and local models degrade on long documents. Sidecars get orphaned. App intelligence stays in the app.
 
-pdf-frontmatter puts a reserved attachment, `agent-frontmatter.yaml`, inside the file. A frontier model writes a 1 KB card once. Later readers — including an 8B model on your machine — read the card instead of the pages.
+open-matter puts a reserved attachment, `open-matter.yaml`, inside the file. A frontier model writes a 1 KB card once. Later readers — including an 8B model on your machine — read the card instead of the pages.
 
 Writing the card costs one full read. Savings start at the second. Tools that do not look still get a normal PDF.
 
-Live: https://pdf-frontmatter.org (drop your own file, ask it a question)
-Spec (CC0), TypeScript, Python, MCP: https://github.com/reisierx/pdf-frontmatter
+Live: https://open-matter.org (drop your own file, ask it a question)
+Spec (CC0), TypeScript, Python, MCP: https://github.com/reisierx/open-matter
 
 ## Maker first comment
 

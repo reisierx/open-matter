@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Tiny CLI: `pdf-frontmatter read file.pdf` / `pdf-frontmatter write file.pdf card.yaml -o out.pdf`
+ * Tiny CLI: `open-matter read file.pdf` / `open-matter write file.pdf card.yaml -o out.pdf`
  */
 import { readFile, writeFile } from "node:fs/promises";
 import { readManifest, writeManifest, extractText } from "./index";
@@ -29,11 +29,11 @@ async function main() {
     console.error(`wrote ${out} (${next.byteLength} bytes)`);
     return;
   }
-  console.error(`pdf-frontmatter ${cmd ?? ""}
+  console.error(`open-matter ${cmd ?? ""}
 
 Usage:
-  pdf-frontmatter read  <file.pdf>
-  pdf-frontmatter write <file.pdf> <card.yaml> [-o out.pdf]
+  open-matter read  <file.pdf>
+  open-matter write <file.pdf> <card.yaml> [-o out.pdf]
 `);
   process.exit(cmd ? 1 : 0);
 }

@@ -1,13 +1,13 @@
-# pdf-frontmatter (Python)
+# open-matter (Python)
 
 ```bash
 pip install pypdf pyyaml
 # from this directory, or once published:
-# pip install pdf-frontmatter
+# pip install open-matter
 ```
 
 ```python
-from pdf_frontmatter import read_manifest, write_manifest
+from open_matter import read_manifest, write_manifest
 
 card = read_manifest("contract.pdf")
 if card:

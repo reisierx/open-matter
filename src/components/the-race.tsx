@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { estimateTokens, readManifest } from "pdf-frontmatter";
+import { estimateTokens, readManifest } from "open-matter";
 import { extractPdfText } from "@/lib/pdf/extract-client";
 import { documentVerdict, verdictPrimary } from "@/lib/savings";
 
@@ -200,7 +200,7 @@ export function TheRace() {
           kicker="ii"
           title="With the card inside"
           side={bound}
-          empty="The same file, plus a 1 KB card named agent-frontmatter.yaml."
+          empty="The same file, plus a 1 KB card named open-matter.yaml."
           accent
         />
       </div>

@@ -3,7 +3,7 @@ import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import appCss from "../styles.css?url";
 
-const APP_NAME = "pdf-frontmatter";
+const APP_NAME = "open-matter";
 const host = import.meta.env.VITE_PUBLIC_HOSTNAME;
 const ogImage = host ? `https://${host}/og.jpg` : undefined;
 
@@ -22,7 +22,7 @@ export const Route = createRootRoute({
       { name: "theme-color", content: "#f3ede3" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:type", content: "website" },
-      { property: "og:title", content: "pdf-frontmatter" },
+      { property: "og:title", content: "open-matter" },
       {
         property: "og:description",
         content: "Stop making AI re-read the same PDF.",

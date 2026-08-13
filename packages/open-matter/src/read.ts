@@ -1,5 +1,5 @@
 import { PDFDocument } from "pdf-lib";
-import { RESERVED_FILENAME, type Manifest, type ReadResult } from "./schema";
+import { RESERVED_FILENAME, RESERVED_FILENAMES, type Manifest, type ReadResult } from "./schema";
 import { listEmbeddedFiles } from "./attachments";
 import { parseManifest } from "./yaml";
 import { contentSha256 } from "./hash";
@@ -27,14 +27,16 @@ export async function readManifest(
   try {
     const pdf = await PDFDocument.load(pdfBytes, { updateMetadata: false });
     const files = listEmbeddedFiles(pdf);
-    const hit = files.find((f) => f.name === RESERVED_FILENAME);
+    const hit =
+      files.find((f) => f.name === RESERVED_FILENAME) ??
+      files.find((f) => (RESERVED_FILENAMES as readonly string[]).includes(f.name));
     if (!hit) {
       return {
         status: "missing",
         manifest: null,
         yaml: null,
         stale: false,
-        reason: "No agent-frontmatter.yaml attachment.",
+        reason: "No open-matter.yaml attachment.",
       };
     }
 

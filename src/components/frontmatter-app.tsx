@@ -9,7 +9,7 @@ import {
   writeManifest,
   type Manifest,
   type ReadResult,
-} from "pdf-frontmatter";
+} from "open-matter";
 import { answerFromCard, generateManifest } from "@/lib/server/generate";
 import { recordEnrichment } from "@/lib/server/stats";
 import { extractPdfText } from "@/lib/pdf/extract-client";
@@ -201,7 +201,7 @@ export function FrontmatterApp() {
 
   function starterCard(name = filename, pageCount = pages, body = text) {
     const stub: Manifest = {
-      spec: "pdf-frontmatter/0.1",
+      spec: "open-matter/0.1",
       title: name.replace(/\.pdf$/i, "") || "Untitled document",
       pages: pageCount,
       summary: "",

@@ -4,7 +4,7 @@ import { SiteShell } from "@/components/site-shell";
 
 export const Route = createFileRoute("/login")({
   component: Login,
-  head: () => ({ meta: [{ title: "Sign in — pdf-frontmatter" }] }),
+  head: () => ({ meta: [{ title: "Sign in — open-matter" }] }),
 });
 
 function Login() {

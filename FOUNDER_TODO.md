@@ -1,47 +1,51 @@
 # What only you can do
 
-Human steps. Nothing here needs a terminal.
+The code is already renamed and waiting in **reisierx/open-matter**.
+You do the accounts, DNS, and Vercel. In this order.
 
-## Done
+## 1. Repo — you did this
 
-1. Code is public — [github.com/reisierx/pdf-frontmatter](https://github.com/reisierx/pdf-frontmatter)
-2. Name — `pdf-frontmatter.org`. The app is `/app`.
-3. Site is live — [https://pdf-frontmatter.org](https://pdf-frontmatter.org)
-4. Writing key — `XAI_API_KEY` is in Vercel.
-5. Empty personal repo — deleted.
+https://github.com/reisierx/open-matter
 
-## Still yours
+## 2. Put the new site on Vercel
 
-### Publish the packages (before Show HN if you can)
+Easiest: a **new** Vercel project, so the old one keeps pdf-frontmatter.org up until the new domain works.
 
-The site does not claim `npm install` until this is done.
+1. Open [vercel.com](https://vercel.com) → Add New → Project
+2. Import **reisierx/open-matter**
+3. Framework: leave whatever it detects. Root directory: `.`
+4. Environment variables — copy from the old project:
+   - `XAI_API_KEY` = the same key
+5. Deploy
 
-- npm: [npmjs.com/signup](https://www.npmjs.com/signup) then tell the person helping you
-- PyPI: [pypi.org/account/register](https://pypi.org/account/register)
+You should get a `*.vercel.app` URL. Open it. You should see **open-matter**, not pdf-frontmatter.
 
-### Record the race (30 seconds)
+## 3. Point open-matter.org at Vercel
 
-Record the **your-document** flow on `/app`, not only the homepage ad.
+Wait until the registrar shows the domain as active (same wait as last time).
 
-1. Drop one of your PDFs
-2. Continue past the card
-3. Tap a suggested question
-4. Capture both lanes finishing, horizontal and a vertical crop
+1. In the new Vercel project → Settings → Domains → add `open-matter.org` and `www.open-matter.org`
+2. Vercel will show the DNS it wants. For an apex on GoDaddy it is usually:
+   - Type **A**, Name **@**, Value **76.76.21.21**
+   - Type **CNAME**, Name **www**, Value **cname.vercel-dns.com**
+3. Save at GoDaddy. Wait 10–60 minutes. Vercel will show the domain as valid.
 
-### Send the launch posts (when you are ready)
+## 4. Redirect the old name
 
-Drafts in `launch/`:
+When open-matter.org is green in Vercel:
 
-1. `launch/show-hn.md` — Tue–Thu 09:00–12:00 US Eastern (or Sunday ~19:00). First comment in the same file. Never ask for upvotes.
-2. `launch/pdf-association.md`
-3. `launch/paper-json.md`
+1. Old Vercel project (pdf-frontmatter) → Settings → Domains
+2. For `pdf-frontmatter.org`, set a **redirect** to `https://open-matter.org`
+3. Or, in the new project, add `pdf-frontmatter.org` as a domain and redirect it there — one project, two names, one site.
 
-Same day: X / LinkedIn on the race video. After: a non-promotional post where local-model builders live, leading with the capability evidence.
+Leave the old GitHub repo public. Its README now points here. You can archive it later (Settings → Archive). Do not delete it; links exist.
 
-### Money
+## 5. Still later (not tonight)
 
-Do not turn on a paid Vercel plan until the site is slow. If anything asks for more than €20, stop.
+- npm / PyPI accounts, then tell the person helping you to publish `open-matter`
+- Record the race on `/app` for launch
+- Show HN drafts are in `launch/` — titles now say open-matter
 
-### After launch, once
+## Money
 
-Reply to the first ten people who write. Batch interest goes on the waitlist.
+Same rules. Domain you just bought. Do not turn on a paid Vercel plan. If anything asks for more than €20, stop.

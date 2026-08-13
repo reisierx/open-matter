@@ -45,9 +45,9 @@ function WhyPage() {
             room when they were written.
           </p>
           <p>
-            pdf-frontmatter is a 1 KB YAML card stored as a normal PDF
+            open-matter is a 1 KB YAML card stored as a normal PDF
             attachment named{" "}
-            <code className="font-mono text-xs">agent-frontmatter.yaml</code>.
+            <code className="font-mono text-xs">open-matter.yaml</code>.
             Acrobat has shown attachments since 2001. The pages do not change.
             A frontier model writes the card once. Every later reader — a
             frontier API, an 8B open-weight model, a 3B model on a phone — reads

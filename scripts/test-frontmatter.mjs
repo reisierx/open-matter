@@ -15,7 +15,7 @@ function readCard(pdf) {
   const list = embedded.lookup(PDFName.of("Names"));
   if (!(list instanceof PDFArray)) return null;
   for (let i = 0; i + 1 < list.size(); i += 2) {
-    if (asString(list.get(i)) !== "agent-frontmatter.yaml") continue;
+    if (asString(list.get(i)) !== "open-matter.yaml") continue;
     const spec = list.lookup(i + 1);
     if (!(spec instanceof PDFDict)) continue;
     const ef = spec.lookup(PDFName.of("EF"));
@@ -32,7 +32,7 @@ const pdf = await PDFDocument.load(bytes);
 const yaml = readCard(pdf);
 if (!yaml) throw new Error("missing card on sample");
 const card = parseYaml(yaml);
-if (card.spec !== "pdf-frontmatter/0.1") throw new Error("bad spec");
+if (card.spec !== "open-matter/0.1") throw new Error("bad spec");
 if (!card.title) throw new Error("missing title");
 if (card.key_sections.liability_cap !== 4) throw new Error("wrong liability page");
 

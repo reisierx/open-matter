@@ -1,7 +1,7 @@
 {
-  "name": "pdf-frontmatter",
+  "name": "open-matter",
   "version": "0.1.0",
-  "description": "Read and write pdf-frontmatter/0.1 manifests inside PDFs.",
+  "description": "Read and write open-matter/0.1 manifests inside PDFs.",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -11,7 +11,7 @@
     ".": "./src/index.ts"
   },
   "bin": {
-    "pdf-frontmatter": "./src/cli.ts"
+    "open-matter": "./src/cli.ts"
   },
   "files": [
     "src",
@@ -27,7 +27,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/reisierx/pdf-frontmatter"
+    "url": "https://github.com/reisierx/open-matter"
   },
   "dependencies": {
     "pdf-lib": "^1.17.1",

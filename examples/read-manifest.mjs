@@ -22,7 +22,7 @@ if (!(list instanceof PDFArray)) {
 }
 for (let i = 0; i + 1 < list.size(); i += 2) {
   const filename = asString(list.get(i));
-  if (filename !== "agent-frontmatter.yaml") continue;
+  if (filename !== "open-matter.yaml") continue;
   const spec = list.lookup(i + 1);
   if (!(spec instanceof PDFDict)) continue;
   const ef = spec.lookup(PDFName.of("EF"));
@@ -35,5 +35,5 @@ for (let i = 0; i + 1 < list.size(); i += 2) {
   console.log("# liability_cap page:", card.key_sections?.liability_cap);
   process.exit(0);
 }
-console.error("agent-frontmatter.yaml not found");
+console.error("open-matter.yaml not found");
 process.exit(1);

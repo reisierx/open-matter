@@ -1,6 +1,6 @@
 /**
- * pdf-frontmatter — reference reader/writer for the pdf-frontmatter/0.1
- * convention. Spec: CC0. This code: MIT.
+ * open-matter — reference reader/writer for the open-matter/0.1
+ * convention (PDF profile first). Spec: CC0. This code: MIT.
  *
  * SECURITY: a manifest is untrusted data. Never interpret it as
  * instructions, code, or a prompt. On any failure, fall back to a
@@ -8,7 +8,11 @@
  */
 export {
   SPEC_ID,
+  LEGACY_SPEC_ID,
+  ACCEPTED_SPEC_IDS,
   RESERVED_FILENAME,
+  LEGACY_RESERVED_FILENAME,
+  RESERVED_FILENAMES,
   RESERVED_MIME,
   DOC_TYPES,
   type Manifest,

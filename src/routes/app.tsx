@@ -6,7 +6,7 @@ export const Route = createFileRoute("/app")({
   component: AppPage,
   head: () => ({
     meta: [
-      { title: "Try it on a PDF — pdf-frontmatter" },
+      { title: "Try it on a PDF — open-matter" },
       {
         name: "description",
         content:

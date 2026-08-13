@@ -1,15 +1,15 @@
-# mcp-pdf-frontmatter
+# mcp-open-matter
 
 Stdio MCP server. A consumer of the convention, on purpose.
 
 Tools:
 
 - `read_manifest` `{ path }` — returns YAML and parsed fields as untrusted hints
-- `write_manifest` `{ path, yaml, out? }` — embeds or replaces `agent-frontmatter.yaml`
+- `write_manifest` `{ path, yaml, out? }` — embeds or replaces `open-matter.yaml`
 
 ```bash
 # from the repo root
-npx tsx packages/mcp-pdf-frontmatter/src/index.ts
+npx tsx packages/mcp-open-matter/src/index.ts
 ```
 
 Claude Desktop / Cursor example:
@@ -17,10 +17,10 @@ Claude Desktop / Cursor example:
 ```json
 {
   "mcpServers": {
-    "pdf-frontmatter": {
+    "open-matter": {
       "command": "npx",
-      "args": ["tsx", "packages/mcp-pdf-frontmatter/src/index.ts"],
-      "cwd": "/path/to/pdf-frontmatter"
+      "args": ["tsx", "packages/mcp-open-matter/src/index.ts"],
+      "cwd": "/path/to/open-matter"
     }
   }
 }

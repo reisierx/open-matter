@@ -1,5 +1,5 @@
 import { PDFDocument } from "pdf-lib";
-import { RESERVED_FILENAME, RESERVED_MIME, type Manifest } from "./schema";
+import { LEGACY_RESERVED_FILENAME, RESERVED_FILENAME, RESERVED_MIME, type Manifest } from "./schema";
 import { removeEmbeddedFile } from "./attachments";
 import { parseYaml, stringifyManifest, validateManifest } from "./yaml";
 
@@ -9,7 +9,7 @@ export type WriteOptions = {
 };
 
 /**
- * Embed (or replace) `agent-frontmatter.yaml` on a PDF. Returns new PDF bytes.
+ * Embed (or replace) `open-matter.yaml` on a PDF. Returns new PDF bytes.
  * The visual pages are not touched.
  *
  * Tools that rewrite a card must pass through unknown keys — validate first,
@@ -35,12 +35,13 @@ export async function writeManifest(
   const pdf = await PDFDocument.load(pdfBytes, { updateMetadata: false });
   if (options.replace !== false) {
     removeEmbeddedFile(pdf, RESERVED_FILENAME);
+    removeEmbeddedFile(pdf, LEGACY_RESERVED_FILENAME);
   }
 
   const bytes = new TextEncoder().encode(yaml.endsWith("\n") ? yaml : yaml + "\n");
   await pdf.attach(bytes, RESERVED_FILENAME, {
     mimeType: RESERVED_MIME,
-    description: "pdf-frontmatter/0.1 machine-readable index card",
+    description: "open-matter/0.1 machine-readable index card",
     creationDate: new Date(),
     modificationDate: new Date(),
   });

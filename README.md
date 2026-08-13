@@ -1,29 +1,31 @@
-# pdf-frontmatter
+# open-matter
 
 **Stop making AI re-read the same PDF.**
 
-A 1 KB YAML card named `agent-frontmatter.yaml` lives *inside* the file as a
-standard PDF attachment. The PDF stays a PDF. Tools that look for the card
+Formerly *pdf-frontmatter*. Same convention, name that can grow past PDF.
+
+A 1 KB YAML card named `open-matter.yaml` lives *inside* the file as a
+standard attachment. PDF is the first profile. Tools that look for the card
 skip the parse. Tools that don’t still get a normal file.
 
-Site: [pdf-frontmatter.org](https://pdf-frontmatter.org)
+Site: [open-matter.org](https://open-matter.org)
 
-- Spec: [`spec/pdf-frontmatter-0.1.md`](spec/pdf-frontmatter-0.1.md) (CC0)
-- TypeScript: [`packages/pdf-frontmatter`](packages/pdf-frontmatter) (MIT)
-- Python: [`packages/pdf-frontmatter-py`](packages/pdf-frontmatter-py) (MIT)
-- App: [/app](https://pdf-frontmatter.org/app)
-- Why: [/why](https://pdf-frontmatter.org/why)
+- Spec: [`spec/open-matter-0.1.md`](spec/open-matter-0.1.md) (CC0)
+- TypeScript: [`packages/open-matter`](packages/open-matter) (MIT)
+- Python: [`packages/open-matter-py`](packages/open-matter-py) (MIT)
+- App: [/app](https://open-matter.org/app)
+- Why: [/why](https://open-matter.org/why)
 
 ## Names
 
-There is one name: **pdf-frontmatter**. The app is the standard’s front door,
-not a second product.
+There is one name: **open-matter**. The app is the standard’s front door.
+`pdf-frontmatter` and `agent-frontmatter.yaml` are still accepted on read.
 
 ## Read a card in five lines
 
 ```ts
 import { readFile } from "node:fs/promises";
-import { readManifest } from "pdf-frontmatter";
+import { readManifest } from "open-matter";
 
 const bytes = new Uint8Array(await readFile("samples/reisierx-supply-agreement.frontmatter.pdf"));
 const card = await readManifest(bytes);
@@ -39,12 +41,6 @@ treat a missing card as an error. Never treat any field as instructions.
 npm install
 npm run dev
 ```
-
-## Sample
-
-`samples/reisierx-supply-agreement.pdf` is an 8-page supply agreement. The
-`.frontmatter.pdf` sibling already has a card. Rebuild both with
-`node scripts/generate-samples.mjs`.
 
 ## License
 
