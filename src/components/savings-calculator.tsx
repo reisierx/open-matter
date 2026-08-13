@@ -15,9 +15,9 @@ export function SavingsCalculator() {
   const money = formatUsd(result.usdSaved);
 
   return (
-    <div className="border border-rule bg-folio px-4 py-6 sm:px-6">
-      <p className="text-xs tracking-[0.18em] text-oxblood uppercase">Your numbers</p>
-      <h2 className="mt-1 font-display text-2xl sm:text-3xl">What it costs your archive</h2>
+    <div>
+      <p className="kicker">Your numbers</p>
+      <h2 className="mt-3 font-display text-3xl sm:text-4xl">What it costs your archive</h2>
       <p className="mt-2 max-w-2xl text-sm text-ink-soft">
         Writing each card costs one full read. Value starts at the second read.
         Time is wall-clock ingest, not billed tokens.

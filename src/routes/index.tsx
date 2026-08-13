@@ -31,7 +31,7 @@ function Home() {
         <h1 className="max-w-3xl text-balance font-display text-4xl leading-[1.1] sm:text-5xl">
           Stop making AI re-read the same <FileFlip />
         </h1>
-        <p className="mt-4 max-w-2xl text-lg text-ink-soft">
+        <p className="lede mt-4 max-w-2xl text-lg">
           A small card travels inside the file: what it is, the facts that
           matter, where to look. PDF ships now. The convention is bigger than
           one format. Write once; every later model skips the parse.
@@ -39,254 +39,214 @@ function Home() {
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
           <Link
             to="/app"
-            className="inline-flex h-12 items-center justify-center border border-oxblood bg-oxblood px-6 text-sm text-oxblood-ink no-underline hover:bg-oxblood-deep hover:text-oxblood-ink"
+            className="inline-flex h-11 items-center justify-center border border-oxblood bg-oxblood px-5 text-sm text-oxblood-ink no-underline hover:bg-oxblood-deep hover:text-oxblood-ink"
           >
             Try it on a .pdf
           </Link>
           <Link
             to="/spec"
-            className="inline-flex h-12 items-center justify-center border border-rule px-6 text-sm text-ink no-underline hover:border-ink"
+            className="inline-flex h-11 items-center justify-center border border-rule px-5 text-sm text-ink no-underline hover:border-ink"
           >
             Read the spec
           </Link>
         </div>
         <p className="mt-3 text-sm text-muted">
-          Free · no account · nothing stored · open standard, spec CC0
+          Free · no account · nothing stored · spec CC0
         </p>
       </Folio>
 
-      <Folio className="mt-8 sm:mt-10">
+      <Folio className="mt-10">
         <TheRace />
       </Folio>
 
-      <Folio className="mt-20">
-        <p className="text-xs tracking-[0.18em] text-oxblood uppercase">How it works</p>
-        <h2 className="mt-3 max-w-3xl text-balance font-display text-3xl leading-[1.12] sm:text-5xl">
+      <Folio className="pt-16 sm:pt-20">
+        <p className="kicker">How it works</p>
+        <h2 className="mt-3 max-w-3xl font-display text-3xl leading-[1.15] sm:text-4xl">
           A document should only have to be understood once.
         </h2>
-        <div className="mt-6 max-w-2xl space-y-4 text-lg text-ink-soft">
-          <p>
-            Every time someone asks an AI about a file, the model starts from
-            nothing. It reads the whole thing. You wait. You pay. The next
-            person does the same work to the same file.
-          </p>
-          <p>
-            That would be fine if the document had changed. It hasn’t. The
-            waste is that the understanding never travels with the thing it is
-            about.
-          </p>
-        </div>
-        <ol className="mt-12 max-w-3xl">
-          <li className="grid gap-2 border-t border-rule py-8 sm:grid-cols-[3.5rem_1fr] sm:gap-8">
-            <p className="font-display text-2xl text-oxblood">i</p>
-            <div>
-              <h3 className="font-display text-2xl">A frontier model reads the file once</h3>
-              <p className="mt-2 text-ink-soft">
-                It writes a small card: what this file is, the facts that
-                matter, and which page they live on. That is the only expensive
-                step.
-              </p>
-            </div>
-          </li>
-          <li className="grid gap-2 border-t border-rule py-8 sm:grid-cols-[3.5rem_1fr] sm:gap-8">
-            <p className="font-display text-2xl text-oxblood">ii</p>
-            <div>
-              <h3 className="font-display text-2xl">We check the card against the pages</h3>
-              <p className="mt-2 text-ink-soft">
-                The questions come from the document, not from the card. If a
-                number is wrong or missing, we rewrite. A card that fails is
-                not attached.
-              </p>
-            </div>
-          </li>
-          <li className="grid gap-2 border-t border-rule py-8 sm:grid-cols-[3.5rem_1fr] sm:gap-8">
-            <p className="font-display text-2xl text-oxblood">iii</p>
-            <div>
-              <h3 className="font-display text-2xl">You get the same file back</h3>
-              <p className="mt-2 text-ink-soft">
-                Nothing on the page looks different. The card sits inside as a
-                normal attachment. The next model — Claude, Grok, something on
-                a laptop — opens that first, then only the page it needs.
-              </p>
-            </div>
-          </li>
+        <p className="lede">
+          Every time someone asks an AI about a file, the model starts from
+          nothing. You wait. You pay. The next person does the same work to
+          the same file — which has not changed. The understanding never
+          travels with it.
+        </p>
+        <ol className="mt-10 max-w-3xl">
+          {[
+            {
+              n: "i",
+              title: "A frontier model reads the file once",
+              body: "It writes a small card: what this file is, the facts that matter, and which page they live on. That is the only expensive step.",
+            },
+            {
+              n: "ii",
+              title: "We check the card against the pages",
+              body: "The questions come from the document, not from the card. If a number is wrong or missing, we rewrite. A card that fails is not attached.",
+            },
+            {
+              n: "iii",
+              title: "You get the same file back",
+              body: "Nothing on the page looks different. The next model — Claude, Grok, something on a laptop — opens the card first, then only the page it needs.",
+            },
+          ].map((s) => (
+            <li
+              key={s.n}
+              className="grid gap-1 border-t border-rule py-5 sm:grid-cols-[2.5rem_1fr] sm:gap-6"
+            >
+              <p className="font-display text-lg text-oxblood">{s.n}</p>
+              <div>
+                <h3 className="font-display text-xl">{s.title}</h3>
+                <p className="mt-1 text-sm text-ink-soft">{s.body}</p>
+              </div>
+            </li>
+          ))}
         </ol>
       </Folio>
 
-      <Folio roman="i" className="mt-20">
-        <h2 className="mt-2 font-display text-3xl sm:text-4xl">What the card enables</h2>
-        <p className="mt-3 max-w-2xl text-ink-soft">
-          A 1 KB map is not a cache. It is the same pattern as ID3, EXIF, and
-          package.json: a tiny embedded layer that other software can trust.
+      <Folio className="pt-16 sm:pt-20">
+        <p className="kicker">What the card enables</p>
+        <h2 className="mt-3 font-display text-3xl sm:text-4xl">
+          Not a cache. A layer other software can trust.
+        </h2>
+        <p className="lede">
+          The same pattern as ID3, EXIF, and package.json: a tiny embedded map.
         </p>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+        <div className="mt-10 grid gap-x-10 gap-y-8 sm:grid-cols-2">
           <Enable
-            n="i"
             title="Small models can finish the job"
             lead="Write the card once with a frontier model."
             body="A 3B model given that card has beaten a frontier model still hunting through raw pages."
             proof="Lost in the Middle · SLM survey · DeRetSyn"
           />
           <Enable
-            n="ii"
             title="Open the right page first"
             lead="Filter before you guess."
             body="Metadata-filtered retrieval lifts precision by about 15%, and quality nearly 2×. The card is that filter."
             proof="Deasy Labs · Two-Step RAG"
           />
           <Enable
-            n="iii"
             title="Decide before you load"
             lead="One kilobyte to know whether to open the file."
             body="Claude Skills route on ~100-token descriptions. Eight skills cost ~500 tokens at startup instead of 70,000."
             proof="SKILL.md / AGENTS.md"
           />
           <Enable
-            n="iv"
             title="Know when memory is stale"
             lead="A content hash is cache-validity for agents."
             body="If the pages changed, the understanding is void. Signed cards are next."
             proof="Mem0 staleness · C2PA 2.3"
           />
           <Enable
-            n="v"
             title="A folder becomes a graph"
             lead="Entities and sections, already named."
             body="The expensive GraphRAG step ships pre-computed. Documents as nodes, shared names as edges."
             proof="Coming — exploration, not guaranteed truth"
-            coming
           />
         </div>
-        <p className="mt-5 text-sm text-muted">
+        <p className="mt-8 text-sm text-muted">
           Sources, cited on the{" "}
           <Link to="/spec" hash="faq">
             spec FAQ
           </Link>{" "}
-          and in the{" "}
-          <Link to="/why">essay</Link>.
+          and in the <Link to="/why">essay</Link>.
         </p>
       </Folio>
 
-      <Folio roman="ii" className="mt-20">
-        <h2 className="font-display text-3xl sm:text-4xl">Who it’s for</h2>
-        <p className="mt-3 max-w-2xl text-ink-soft">
-          Three desks. Same card. The file leaves the building; the
-          understanding has to leave with it.
+      <Folio className="pt-16 sm:pt-20">
+        <p className="kicker">Who it’s for</p>
+        <h2 className="mt-3 font-display text-3xl sm:text-4xl">Three desks. Same card.</h2>
+        <p className="lede">
+          The file leaves the building. The understanding has to leave with it.
         </p>
-        <div className="mt-8 grid min-w-0 gap-4 lg:grid-cols-3">
+        <div className="mt-10 grid gap-x-10 gap-y-8 lg:grid-cols-3">
           <Audience
             kicker="You write agents"
             title="Stop handing your agent the haystack."
-            body="Claude, Codex, Cursor, Grok already load skills. Drop ours in. The agent opens the card, then one page — not twelve."
+            body="Claude, Codex, Cursor, Grok already load skills. Drop ours in. The agent opens the card, then one page."
             href="#install"
-            cta="Install the skill"
+            cta="Install for Claude"
           />
           <Audience
             kicker="You sit on a pile"
             title="Pay the first read once."
-            body="Funds, chambers, insurers, public records. Every later desk, every later model, reads 1 KB. The file still looks the same in court."
+            body="Funds, chambers, insurers, public records. Every later desk reads the card. The file still looks the same in court."
             href="#waitlist"
             cta="Join the batch list"
           />
           <Audience
             kicker="You run small models"
             title="A 3B can finish what the 70B was hired to start."
-            body="Frontier writes the digest. Your on-device stack answers from it. That is the only way an 8B survives past eight pages."
+            body="Frontier writes the digest. Your on-device stack answers from it."
             href="/why"
             cta="Why this matters locally"
           />
         </div>
       </Folio>
 
-      <Folio className="mt-20">
+      <Folio className="pt-16 sm:pt-20">
         <div id="install">
-        <p className="text-xs tracking-[0.18em] text-oxblood uppercase">Portable</p>
-        <h2 className="mt-2 font-display text-3xl sm:text-4xl">
-          A skill where agents already look. MCP if you want hands.
-        </h2>
-        <p className="mt-3 max-w-2xl text-ink-soft">
-          The website is the first runner. The unit you take home is a folder.
-          These agents already load skills — that is the point of the format.
-        </p>
-        <ul className="mt-6 flex flex-wrap items-end gap-x-8 gap-y-5">
-          {[
-            { name: "Claude", src: "/marks/claude.svg" },
-            { name: "ChatGPT", src: "/marks/openai.svg" },
-            { name: "Cursor", src: "/marks/cursor.svg" },
-            { name: "Grok", src: "/marks/grok.svg" },
-            { name: "Copilot", src: "/marks/copilot.svg" },
-          ].map((m) => (
-            <li key={m.name} className="flex items-center gap-2.5">
-              <img src={m.src} alt="" width={28} height={28} className="h-7 w-7" />
-              <span className="font-display text-lg leading-none">{m.name}</span>
-            </li>
-          ))}
-        </ul>
-        <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <pre className="overflow-x-auto bg-ink p-4 text-[0.7rem] leading-relaxed text-paper">
-            {`# Skill (write + read, PDF profile)
-skills/open-matter-pdf-write
-skills/open-matter-pdf-read`}
-          </pre>
-          <pre className="overflow-x-auto bg-ink p-4 text-[0.7rem] leading-relaxed text-paper">
-            {`# Hands
-npx mcp-open-matter
-# read_manifest / write_manifest`}
-          </pre>
-        </div>
-        <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <a
-            href="https://github.com/reisierx/open-matter/tree/main/skills"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex h-12 items-center justify-center border border-oxblood bg-oxblood px-6 text-sm text-oxblood-ink no-underline hover:bg-oxblood-deep hover:text-oxblood-ink"
-          >
-            Get the skills
-          </a>
-          <a
-            href="https://github.com/reisierx/open-matter/tree/main/packages/mcp-open-matter"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex h-12 items-center justify-center border border-rule px-6 text-sm text-ink no-underline hover:border-ink"
-          >
-            MCP server
-          </a>
-          <Link to="/spec" hash="install" className="inline-flex h-12 items-center text-sm">
-            Libraries
-          </Link>
-        </div>
-        </div>
-      </Folio>
-
-      <Folio className="mt-20">
-        <div className="border border-rule bg-folio px-5 py-8 sm:px-8">
-          <p className="text-xs tracking-[0.18em] text-muted uppercase">Open</p>
-          <h2 className="mt-2 font-display text-3xl">A convention, CC0. Code, MIT.</h2>
-          <p className="mt-3 max-w-2xl text-sm text-ink-soft">
-            TypeScript, Python, and an MCP server in the repo. Complementary to{" "}
-            <a href="https://doclang.ai" target="_blank" rel="noreferrer">
-              DocLang
-            </a>
-            : that project describes what a machine-readable document looks like.
-            This one says where that data lives so it cannot be orphaned.
-          </p>
-          <a
-            href="https://github.com/reisierx/open-matter"
-            target="_blank"
-            rel="noreferrer"
-            className="mt-5 inline-block text-sm"
-          >
-            github.com/reisierx/open-matter
-          </a>
-        </div>
-      </Folio>
-
-      <Folio className="mt-20" roman="iii">
-        <div id="waitlist">
-          <h2 className="font-display text-3xl sm:text-4xl">
-            Coming: batch enrichment for whole archives
+          <p className="kicker">Install</p>
+          <h2 className="mt-3 font-display text-3xl sm:text-4xl">
+            A Claude plugin. Skills and MCP if you want the pieces.
           </h2>
-          <p className="mt-3 max-w-xl text-ink-soft">
+          <p className="lede">
+            Claude first — skill plus hands in one install. The same folders
+            work in Cursor, Codex, Grok, and Copilot.
+          </p>
+          <ul className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-4">
+            {[
+              { name: "Claude", src: "/marks/claude.svg" },
+              { name: "ChatGPT", src: "/marks/openai.svg" },
+              { name: "Cursor", src: "/marks/cursor.svg" },
+              { name: "Grok", src: "/marks/grok.svg" },
+              { name: "Copilot", src: "/marks/copilot.svg" },
+            ].map((m) => (
+              <li key={m.name} className="flex items-center gap-2">
+                <img src={m.src} alt="" width={22} height={22} className="h-5 w-5" />
+                <span className="text-sm">{m.name}</span>
+              </li>
+            ))}
+          </ul>
+          <pre className="mt-8 overflow-x-auto bg-ink p-4 text-[0.7rem] leading-relaxed text-paper">
+            {`/plugin marketplace add reisierx/open-matter
+/plugin install open-matter@open-matter`}
+          </pre>
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <a
+              href="https://github.com/reisierx/open-matter/tree/main/plugins/open-matter"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex h-11 items-center justify-center border border-oxblood bg-oxblood px-5 text-sm text-oxblood-ink no-underline hover:bg-oxblood-deep hover:text-oxblood-ink"
+            >
+              Claude plugin
+            </a>
+            <a
+              href="https://github.com/reisierx/open-matter/tree/main/skills"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex h-11 items-center justify-center border border-rule px-5 text-sm text-ink no-underline hover:border-ink"
+            >
+              Skills
+            </a>
+            <Link to="/spec" hash="install" className="inline-flex h-11 items-center text-sm">
+              Spec and libraries
+            </Link>
+          </div>
+          <p className="mt-6 text-sm text-muted">
+            Spec CC0 · code MIT ·{" "}
+            <a href="https://github.com/reisierx/open-matter" target="_blank" rel="noreferrer">
+              github.com/reisierx/open-matter
+            </a>
+          </p>
+        </div>
+      </Folio>
+
+      <Folio className="pt-16 sm:pt-20">
+        <div id="waitlist">
+          <p className="kicker">Coming</p>
+          <h2 className="mt-3 font-display text-3xl sm:text-4xl">
+            Batch enrichment for whole archives
+          </h2>
+          <p className="lede">
             Point it at a folder. Get every file back with a card. PDF first.
             We store the email and nothing else.
           </p>
@@ -294,7 +254,7 @@ npx mcp-open-matter
         </div>
       </Folio>
 
-      <Folio className="mt-16">
+      <Folio className="pt-16 sm:pt-20 pb-8">
         <SavingsCalculator />
       </Folio>
     </SiteShell>
@@ -302,30 +262,23 @@ npx mcp-open-matter
 }
 
 function Enable({
-  n,
   title,
   lead,
   body,
   proof,
-  coming,
 }: {
-  n: string;
   title: string;
   lead: string;
   body: string;
   proof: string;
-  coming?: boolean;
 }) {
   return (
-    <div className="border border-rule bg-folio p-5">
-      <p className="text-xs tracking-[0.16em] text-oxblood uppercase">
-        {coming ? "Coming" : n}
-      </p>
-      <h3 className="mt-2 font-display text-xl">{title}</h3>
+    <div className="border-t border-rule pt-4">
+      <h3 className="font-display text-xl">{title}</h3>
       <p className="mt-2 text-sm text-ink-soft">
         <strong className="font-medium text-ink">{lead}</strong> {body}
       </p>
-      <p className="mt-3 font-serif text-sm italic text-muted">{proof}</p>
+      <p className="mt-2 text-sm italic text-muted">{proof}</p>
     </div>
   );
 }
@@ -336,44 +289,31 @@ function Audience({
   body,
   href,
   cta,
-  code,
 }: {
   kicker: string;
   title: string;
   body: string;
   href: string;
   cta: string;
-  code?: string;
 }) {
   const inner = (
     <>
-      <p className="text-xs tracking-[0.16em] text-oxblood uppercase">{kicker}</p>
+      <p className="kicker">{kicker}</p>
       <h3 className="mt-2 font-display text-xl">{title}</h3>
-      <p className="mt-2 flex-1 text-sm text-ink-soft">{body}</p>
-      {code ? (
-        <pre className="mt-4 w-full max-w-full overflow-x-auto bg-ink p-3 text-[0.7rem] leading-relaxed text-paper">
-          {code}
-        </pre>
-      ) : null}
-      <span className="mt-4 text-sm text-oxblood">{cta}</span>
+      <p className="mt-2 text-sm text-ink-soft">{body}</p>
+      <span className="mt-3 inline-block text-sm text-oxblood">{cta}</span>
     </>
   );
 
   if (href.startsWith("#") || href.startsWith("http")) {
     return (
-      <a
-        href={href}
-        className="flex min-w-0 flex-col border border-rule bg-folio p-5 text-ink no-underline hover:border-ink"
-      >
+      <a href={href} className="block border-t border-rule pt-4 text-ink no-underline">
         {inner}
       </a>
     );
   }
   return (
-    <Link
-      to={href}
-      className="flex min-w-0 flex-col border border-rule bg-folio p-5 text-ink no-underline hover:border-ink"
-    >
+    <Link to={href} className="block border-t border-rule pt-4 text-ink no-underline">
       {inner}
     </Link>
   );

@@ -117,13 +117,13 @@ function SpecPage() {
 
   return (
     <SiteShell>
-      <Folio roman="spec" className="pt-12 sm:pt-16">
+      <Folio className="pt-12 sm:pt-16">
         <p className="text-sm text-muted">
           <span className="border border-rule px-2 py-0.5 font-mono text-xs">0.1</span>
           {" · "}
           Published 13 August 2026 · CC0 1.0
         </p>
-        <h1 className="mt-2 font-display text-4xl sm:text-5xl">open-matter / 0.1</h1>
+        <h1 className="mt-2 font-display text-3xl sm:text-4xl">open-matter / 0.1</h1>
         <p className="mt-4 max-w-2xl text-ink-soft">
           Normative text. Implementations that want to interoperate must follow
           the sentences that say <em>must</em>. Version 0.1 is the PDF profile.
@@ -401,6 +401,7 @@ from open_matter import read_manifest`}
             rows={[
               ["open-matter (TS)", "readManifest / writeManifest in this repo."],
               ["open-matter (Python)", "packages/open-matter-py."],
+              ["Claude plugin", "/plugin marketplace add reisierx/open-matter — skills, commands, MCP."],
               ["MCP server", "npx mcp-open-matter — read_manifest, write_manifest."],
               ["This app", "/app writes a card and races it on your file."],
               ["Loaders", "None merged yet. PRs welcome: check the card before parsing."],

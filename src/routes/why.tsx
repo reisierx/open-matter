@@ -19,8 +19,8 @@ function WhyPage() {
   return (
     <SiteShell>
       <Folio className="pt-12 sm:pt-16">
-        <p className="text-sm tracking-[0.16em] text-muted uppercase">13 August 2026 · Lisboa</p>
-        <h1 className="mt-3 max-w-3xl font-display text-4xl sm:text-5xl">
+        <p className="kicker">13 August 2026 · Lisboa</p>
+        <h1 className="mt-3 max-w-3xl font-display text-3xl sm:text-4xl">
           Why the card lives in the file — and why small models feel it first
         </h1>
         <article className="mt-10 max-w-2xl space-y-5 text-ink-soft">

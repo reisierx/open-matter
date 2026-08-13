@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "open-matter": {
+      "command": "npx",
+      "args": ["-y", "tsx", "packages/mcp-open-matter/src/index.ts"]
+    }
+  }
+}

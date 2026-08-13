@@ -1,0 +1,11 @@
+{
+  "name": "open-matter",
+  "description": "Write a cited card into a PDF, evaluate it against the pages, and read it before parsing. Hands: read_manifest / write_manifest.",
+  "version": "0.1.0",
+  "author": {
+    "name": "reisierx"
+  },
+  "homepage": "https://open-matter.org",
+  "repository": "https://github.com/reisierx/open-matter",
+  "license": "MIT"
+}

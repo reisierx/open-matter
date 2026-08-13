@@ -45,7 +45,7 @@ export function SiteHeader({ compact = false }: { compact?: boolean }) {
 
 export function SiteFooter() {
   return (
-    <footer className="mt-20 border-t border-rule">
+    <footer className="mt-16 border-t border-rule sm:mt-20">
       <div className="mx-auto flex max-w-5xl flex-col gap-8 px-4 py-10 sm:flex-row sm:items-start sm:justify-between sm:px-6">
         <p className="max-w-sm font-serif text-sm text-muted">
           An open convention · spec CC0, code MIT · made in Lisboa
