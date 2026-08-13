@@ -66,26 +66,26 @@ function Home() {
         </h2>
         <ul className="mt-6 grid gap-6 sm:grid-cols-3">
           <li className="border-t border-rule pt-4">
-            <h3 className="font-display text-xl">Why</h3>
+            <h3 className="font-display text-xl">Stop chewing the same twelve pages.</h3>
             <p className="mt-2 text-sm text-ink-soft">
-              Every chat and every agent pays the full parse again. Token prices
-              fall. The seconds to chew twelve pages do not. The understanding
-              has to travel with the file.
+              Every chat and every agent pays the full parse again. Token
+              prices fall. The seconds do not. The understanding has to leave
+              with the file.
             </p>
           </li>
           <li className="border-t border-rule pt-4">
-            <h3 className="font-display text-xl">How</h3>
+            <h3 className="font-display text-xl">It does not download until it passes.</h3>
             <p className="mt-2 text-sm text-ink-soft">
-              A frontier model writes a card. An evaluation written from the
-              pages — not from the card — has to pass. Fail, and we rebuild.
-              We do not download a card that failed.
+              A frontier model writes the card. The pages write the
+              evaluation. Fail, and we rebuild. We do not ship a card that
+              failed.
             </p>
           </li>
           <li className="border-t border-rule pt-4">
-            <h3 className="font-display text-xl">What</h3>
+            <h3 className="font-display text-xl">Same file. The map is already inside.</h3>
             <p className="mt-2 text-sm text-ink-soft">
-              The same file, plus a 1 KB card inside. Nothing visible changes.
-              Later readers open the card, then one page. PDF ships now.
+              Nothing visible changes. Later readers open 1 KB, then one page.
+              PDF ships now. The pocket is the only thing that will change.
             </p>
           </li>
         </ul>
