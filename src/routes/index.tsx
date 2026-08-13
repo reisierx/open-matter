@@ -183,8 +183,8 @@ function Home() {
           />
           <Audience
             kicker="You have PDFs"
-            title="Race it on your own file."
-            body="Drop one PDF. Ask it a question. See the card side finish first. Free."
+            title="It has to pass before it downloads."
+            body="Drop one PDF. The exam is written from the pages, not the card. Free."
             href="/app"
             cta="Try it on a PDF"
           />

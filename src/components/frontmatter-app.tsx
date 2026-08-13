@@ -13,9 +13,18 @@ import {
   type Manifest,
   type ReadResult,
 } from "open-matter";
-import { answerFromCard, generateManifest } from "@/lib/server/generate";
+import { answerFromCard, generateExam, generateManifest } from "@/lib/server/generate";
 import { recordEnrichment } from "@/lib/server/stats";
 import { extractPdfText } from "@/lib/pdf/extract-client";
+import {
+  answerMatchesGold,
+  scoreEval,
+  structuralChecks,
+  verifyExamItem,
+  type EvalResult,
+  type ExamItem,
+  type QuestionResult,
+} from "@/lib/evals";
 import { ASSUMPTIONS, documentVerdict, verdictPrimary } from "@/lib/savings";
 
 const MAX_BYTES = 8 * 1024 * 1024;
@@ -24,6 +33,8 @@ type Phase =
   | "idle"
   | "reading"
   | "writing"
+  | "examining"
+  | "evaluating"
   | "review"
   | "has_card"
   | "ask"
@@ -180,9 +191,12 @@ export function FrontmatterApp() {
   const [hint, setHint] = useState<{ section: string; page: number } | null>(null);
   const [firstRead, setFirstRead] = useState<FirstRead | null>(null);
   const [writeElapsed, setWriteElapsed] = useState(0);
+  const [exam, setExam] = useState<ExamItem[]>([]);
+  const [evalResult, setEvalResult] = useState<EvalResult | null>(null);
+  const examRef = useRef<ExamItem[]>([]);
 
   useEffect(() => {
-    if (phase !== "writing") return;
+    if (phase !== "writing" && phase !== "examining" && phase !== "evaluating") return;
     const t0 = performance.now();
     const id = window.setInterval(() => setWriteElapsed(performance.now() - t0), 100);
     return () => window.clearInterval(id);
@@ -234,8 +248,7 @@ export function FrontmatterApp() {
         setYaml(card.yaml);
         setQuestions(fallbackQuestions(card.manifest));
         setFirstRead({ tokens: estimateTokens(extracted.text), ms: 0, pages: extracted.pages });
-        setPhase("has_card");
-        setStep(2);
+        await sitExam(card.yaml, extracted.perPage, extracted.text, extracted.pages);
         return;
       }
       if (card.yaml) setYaml(card.yaml);
@@ -245,6 +258,7 @@ export function FrontmatterApp() {
         extractedPages: extracted.pages,
         name: file.name,
         existingYaml: card.yaml ?? undefined,
+        perPage: extracted.perPage,
       });
     } catch {
       setPhase("error");
@@ -258,10 +272,12 @@ export function FrontmatterApp() {
     name?: string;
     existingYaml?: string;
     focus?: string;
+    perPage?: string[];
   }) {
     const useText = opts?.extractedText ?? text;
     const usePages = opts?.extractedPages ?? pages;
     const useName = opts?.name ?? filename;
+    const usePerPage = opts?.perPage ?? perPage;
     const useExisting = opts?.existingYaml ?? existing?.yaml ?? yaml ?? undefined;
     const writeTokens = estimateTokens(useText);
     const isExpand = Boolean(opts?.focus);
@@ -302,8 +318,11 @@ export function FrontmatterApp() {
       if (!isExpand) {
         setFirstRead({ tokens: writeTokens, ms: performance.now() - started, pages: usePages });
       }
-      setPhase("review");
-      setStep(2);
+      const yamlOut = parsed.ok
+        ? stringifyManifest({ ...parsed.value, content_sha256: hash, pages: usePages })
+        : res.yaml;
+      await sitExam(yamlOut, usePerPage, useText, usePages);
+      return;
     } catch {
       if (!yaml.trim()) starterCard(useName, usePages, useText);
       setQuestions(fallbackQuestions(null));
@@ -322,6 +341,68 @@ export function FrontmatterApp() {
       extraction: { scanned: body.length < 40 },
     };
     setYaml(stringifyManifest(stub));
+  }
+
+  function taggedPages(list: string[]): string {
+    return list.map((t, i) => `--- page ${i + 1} ---\n${t}`).join("\n\n").slice(0, 60_000);
+  }
+
+  async function ensureExam(list: string[], pageCount: number): Promise<ExamItem[]> {
+    if (examRef.current.length) return examRef.current;
+    setPhase("examining");
+    try {
+      const res = await generateExam({
+        data: { pages: taggedPages(list), pageCount },
+      });
+      const raw = res.ok ? res.items : [];
+      const verified = raw.filter((item) => verifyExamItem(item, list));
+      examRef.current = verified;
+      setExam(verified);
+      return verified;
+    } catch {
+      examRef.current = [];
+      setExam([]);
+      return [];
+    }
+  }
+
+  async function sitExam(yamlStr: string, list: string[], _body: string, pageCount: number) {
+    const items = await ensureExam(list, pageCount);
+    setPhase("evaluating");
+    setStep(2);
+    const parsed = parseManifest(yamlStr);
+    const structural = parsed.ok
+      ? structuralChecks(parsed.value, list)
+      : [{ id: "yaml", ok: false, label: parsed.error }];
+    const questionRows: QuestionResult[] = [];
+    let tokens = estimateTokens(yamlStr || " ");
+    const t0 = performance.now();
+    for (const item of items.slice(0, 5)) {
+      try {
+        let hop = await answerFromCard({ data: { question: item.question, yaml: yamlStr } });
+        if (hop.ok && hop.status === "need_page" && hop.needPage > 0) {
+          const pageText = list[hop.needPage - 1] || "";
+          tokens += estimateTokens(pageText);
+          hop = await answerFromCard({
+            data: { question: item.question, yaml: yamlStr, pageText, page: hop.needPage },
+          });
+        }
+        const answer = hop.ok ? hop.answer : hop.error;
+        const ok = Boolean(hop.ok && hop.status === "answered" && answerMatchesGold(answer, item.answer));
+        questionRows.push({ question: item.question, gold: item.answer, page: item.page, answer, ok });
+      } catch {
+        questionRows.push({
+          question: item.question,
+          gold: item.answer,
+          page: item.page,
+          answer: "The question could not be asked.",
+          ok: false,
+        });
+      }
+    }
+    setEvalResult(scoreEval(structural, questionRows, tokens, performance.now() - t0));
+    setPhase("review");
+    setStep(2);
   }
 
   function goAsk() {
@@ -482,7 +563,7 @@ export function FrontmatterApp() {
       URL.revokeObjectURL(url);
       setSavedName(outName);
       setPhase("done");
-      setStep(4);
+      setStep(3);
       const saved = Math.max(0, estimateTokens(text) - estimateTokens(yamlOut));
       void recordEnrichment({ data: { tokensSaved: saved } }).catch(() => undefined);
     } catch (err) {
@@ -513,6 +594,9 @@ export function FrontmatterApp() {
     setHint(null);
     setFirstRead(null);
     setWriteElapsed(0);
+    setExam([]);
+    setEvalResult(null);
+    examRef.current = [];
   }
 
   return (
@@ -522,9 +606,8 @@ export function FrontmatterApp() {
         aria-label="Steps"
       >
         <li className={step === 1 ? "text-oxblood" : ""}>i · drop</li>
-        <li className={step === 2 ? "text-oxblood" : ""}>ii · review</li>
-        <li className={step === 3 ? "text-oxblood" : ""}>iii · ask</li>
-        <li className={step === 4 ? "text-oxblood" : ""}>iv · download</li>
+        <li className={step === 2 ? "text-oxblood" : ""}>ii · exam</li>
+        <li className={step === 3 ? "text-oxblood" : ""}>iii · download</li>
       </ol>
 
       <div className="flex min-h-0 flex-1 items-center justify-center overflow-hidden px-4 py-3 sm:px-6">
@@ -548,6 +631,15 @@ export function FrontmatterApp() {
               body={`${firstRead?.pages || pages || "—"} pages · ${(firstRead?.tokens ?? 0).toLocaleString("en-GB")} tokens · ${(writeElapsed / 1000).toFixed(1)}s`}
             />
           ) : null}
+          {phase === "examining" ? (
+            <Status title="Writing the exam from the pages…" body="The card does not get to write the questions." />
+          ) : null}
+          {phase === "evaluating" ? (
+            <Status
+              title="Sitting the exam…"
+              body={exam.length ? `${exam.length} questions from the document` : "Checking cites against the pages"}
+            />
+          ) : null}
           {phase === "binding" ? <Status title="Attaching the card…" body={filename} /> : null}
 
           {phase === "review" || phase === "has_card" ? (
@@ -564,6 +656,7 @@ export function FrontmatterApp() {
               validation={validation}
               error={error}
               firstRead={firstRead}
+              evalResult={evalResult}
               onBack={reset}
               onRegenerate={() => void draftCard()}
               onContinue={goAsk}
@@ -663,8 +756,9 @@ function Idle({
     <div>
       <h1 className="font-display text-4xl sm:text-5xl">Drop a PDF.</h1>
       <p className="mt-3 max-w-md text-ink-soft">
-        You get the same file back with a 1 KB card inside that AI tools and local
-        models can read.
+        A frontier model writes a card. An exam written from the pages — not
+        from the card — has to pass. Then you download the same file with the
+        card inside.
       </p>
       <div
         onDragOver={(e) => {
@@ -730,6 +824,7 @@ function Review({
   validation,
   error,
   firstRead,
+  evalResult,
   onBack,
   onRegenerate,
   onContinue,
@@ -747,18 +842,21 @@ function Review({
   validation: ReturnType<typeof parseManifest> | null;
   error: string | null;
   firstRead: FirstRead | null;
+  evalResult: EvalResult | null;
   onBack: () => void;
   onRegenerate: () => void;
   onContinue: () => void;
   onDownload: () => void;
 }) {
-  const already = phase === "has_card";
+  const passed = evalResult?.passed ?? false;
+  const qOk = evalResult?.questions.filter((q) => q.ok).length ?? 0;
+  const qN = evalResult?.questions.length ?? 0;
   return (
     <div className="flex min-h-0 flex-col">
       <div className="shrink-0">
         <p className="text-xs tracking-[0.16em] text-muted uppercase">{filename}</p>
         <h1 className="mt-1 font-display text-3xl sm:text-4xl">
-          {already ? "This PDF already has a card." : "Review the card."}
+          {evalResult ? (passed ? "The card passed." : "The card failed the exam.") : "Review the card."}
         </h1>
         {stale ? (
           <p className="mt-2 text-sm text-warn">The text has changed since this card was written. Replace it.</p>
@@ -768,14 +866,21 @@ function Review({
             {error}
           </p>
         ) : null}
+        {evalResult ? (
+          <p className={`mt-2 font-display text-xl ${passed ? "text-oxblood" : "text-ink"}`}>
+            {qN ? `${qOk}/${qN} questions` : "No grounded questions"}
+            {evalResult.structural.length
+              ? ` · ${evalResult.structural.filter((c) => c.ok).length}/${evalResult.structural.length} cites`
+              : ""}
+            {` · ${evalResult.tokens.toLocaleString("en-GB")} tokens`}
+            {evalResult.ms > 0 ? ` · ${(evalResult.ms / 1000).toFixed(1)}s` : ""}
+          </p>
+        ) : null}
         {firstRead && firstRead.tokens > 0 ? (
-          <p className="mt-2 text-sm text-ink-soft">
-            First read:{" "}
-            <span className="text-ink">
-              {firstRead.tokens.toLocaleString("en-GB")} tokens
-              {firstRead.ms > 0 ? ` · ${(firstRead.ms / 1000).toFixed(1)}s` : ""}
-              {firstRead.pages ? ` · ${firstRead.pages} pages` : ""}
-            </span>
+          <p className="mt-1 text-sm text-ink-soft">
+            First read: {firstRead.tokens.toLocaleString("en-GB")} tokens
+            {firstRead.ms > 0 ? ` · ${(firstRead.ms / 1000).toFixed(1)}s` : ""}
+            {firstRead.pages ? ` · ${firstRead.pages} pages` : ""}. The exam is written from the pages, not the card.
           </p>
         ) : null}
       </div>
@@ -796,7 +901,10 @@ function Review({
             )}
           </div>
         ) : (
-          <SummaryCard manifest={manifest} pages={pages} />
+          <div className="max-h-56 space-y-3 overflow-y-auto sm:max-h-72">
+            {evalResult ? <Scorecard result={evalResult} /> : null}
+            <SummaryCard manifest={manifest} pages={pages} />
+          </div>
         )}
       </div>
       <div className="mt-3 shrink-0 space-y-3">
@@ -805,30 +913,66 @@ function Review({
           Edit the raw card (YAML)
         </label>
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-          <button
-            type="button"
-            onClick={onContinue}
-            disabled={!validation?.ok}
-            className="h-11 border border-oxblood bg-oxblood px-5 text-sm text-oxblood-ink hover:bg-oxblood-deep disabled:opacity-50"
-          >
-            {already ? "Keep it and try a question" : "Try a question"}
-          </button>
-          <button
-            type="button"
-            onClick={onDownload}
-            disabled={!validation?.ok}
-            className="h-11 border border-rule px-5 text-sm disabled:opacity-50"
-          >
-            Skip, attach and download
-          </button>
-          <button type="button" onClick={onRegenerate} className="h-11 border border-rule px-5 text-sm">
-            {already ? "Replace the card" : "Regenerate"}
+          {passed ? (
+            <button
+              type="button"
+              onClick={onDownload}
+              disabled={!validation?.ok}
+              className="h-11 border border-oxblood bg-oxblood px-5 text-sm text-oxblood-ink hover:bg-oxblood-deep disabled:opacity-50"
+            >
+              Attach the card and download
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={onRegenerate}
+              className="h-11 border border-oxblood bg-oxblood px-5 text-sm text-oxblood-ink hover:bg-oxblood-deep"
+            >
+              Rebuild the card
+            </button>
+          )}
+          {passed ? (
+            <button type="button" onClick={onRegenerate} className="h-11 border border-rule px-5 text-sm">
+              Rebuild
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={onDownload}
+              disabled={!validation?.ok}
+              className="h-11 border border-rule px-5 text-sm disabled:opacity-50"
+            >
+              Download anyway
+            </button>
+          )}
+          <button type="button" onClick={onContinue} className="h-11 border border-rule px-5 text-sm">
+            Ask one yourself
           </button>
           <button type="button" onClick={onBack} className="h-11 px-3 text-sm text-muted">
             Back
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function Scorecard({ result }: { result: EvalResult }) {
+  return (
+    <div className="border border-rule bg-folio p-4">
+      <p className="text-xs tracking-[0.16em] text-oxblood uppercase">Exam from the pages</p>
+      <ul className="mt-2 space-y-1 text-sm">
+        {result.structural.map((c) => (
+          <li key={c.id} className={c.ok ? "text-ink-soft" : "text-warn"}>
+            {c.ok ? "Pass" : "Fail"} · {c.label}
+          </li>
+        ))}
+        {result.questions.map((q) => (
+          <li key={q.question} className={q.ok ? "text-ink-soft" : "text-warn"}>
+            {q.ok ? "Pass" : "Fail"} · {q.question}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

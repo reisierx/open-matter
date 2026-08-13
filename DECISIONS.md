@@ -6,7 +6,7 @@
 - **Category copy.** Portable document memory / self-describing manifest. Not “cache” or “CDN”.
 - **Value display.** At least two of: multiple, percentage, money. Never a dollar figure below $1. Fleet calculator also shows hours. Break-even is read two.
 - **Card write.** Envelope stays tiny (`spec`, `title`, hash). The value is `facts: [{fact, page}]` plus typed entities. A number without a page is a writer bug.
-- **In-app test.** Consumer B: model sees the card first. If it needs a page, *it* names the page. We do not pick the page for it.
+- **Evals.** The exam is written from the pages, never the card. Items are kept only if the page contains the answer span. Structure + ≥75% of questions must pass before we treat the card as ready. Download-anyway remains a secondary action.
 - **Nav.** Home, App, Spec. One wordmark: open-matter.
 - **MCP.** `packages/mcp-open-matter`.
 - **GitHub.** `reisierx/open-matter`. The old `reisierx/pdf-frontmatter` repo is a pointer.
