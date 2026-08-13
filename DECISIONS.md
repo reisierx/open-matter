@@ -9,7 +9,7 @@
 - **Design system.** Shared. Warm paper, ink, one oxblood accent, serif display (Fraunces) + serif body (Source Serif 4) + IBM Plex Mono. Near-zero radius: this is print, not a SaaS card grid.
 - **Repo layout.** Monorepo: web app at the root, convention + TS/Python libraries under `packages/`, spec under `spec/`, launch kit under `launch/`.
 - **Package names.** `pdf-frontmatter` on npm (name was free on 2026-08-13). Python: `pdf-frontmatter` on PyPI. MCP server: `mcp-pdf-frontmatter`.
-- **Domains proposed.** Standard: `pdf-frontmatter.org` (RDAP: unregistered). App: `prefacio.app` (RDAP: unregistered). Alternates in `FOUNDER_TODO.md`.
+- **Domains.** One name: `pdf-frontmatter.org` (bought 13 August 2026). Prefácio is a path, `/app`, not a second domain. `prefacio.app` is deferred.
 - **Waitlist.** Email only, stored in Postgres/PGLite. No document content, no tracking pixels, no analytics SDK.
 - **Counter.** Public running total of documents enriched and estimated tokens saved. Incremented on download via a content-free `recordEnrichment` call.
 - **Auth.** Platform sign-in is wired (required by the template) but the product does not require an account. Prefácio and the waitlist work signed out.

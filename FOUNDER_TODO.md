@@ -8,37 +8,24 @@ Public repository: [https://github.com/reisierx/pdf-frontmatter](https://github.
 
 On the **reisierx** organisation (the connection can write there). The empty personal repo at `goncalo-reisierx/pdf-frontmatter` can be deleted. In the repository settings, tick **Issues** if it is not already on, and leave the repo public.
 
-## 2. Buy the names
+## 2. Buy the names — done
 
-Checked 13 August 2026. None of these were registered.
+Bought **`pdf-frontmatter.org`** on 13 August 2026. One name. Prefácio lives at `https://pdf-frontmatter.org/app`. Do not buy `prefacio.app` unless the app later needs its own door.
 
-**For the standard (buy one):**
-
-1. `pdf-frontmatter.org` — first choice. Looks like a convention, not a startup.
-2. `pdf-frontmatter.dev` — fine if .org is taken by the time you look.
-3. `frontmatter.pdf` is not a real suffix. Skip it.
-
-**For Prefácio (buy one):**
-
-1. `prefacio.app` — first choice. Short, matches the product.
-2. `prefacio.pt` — good if you want the Portuguese home.
-3. `useprefacio.com` — fallback.
-
-Do not put Prefácio on the standard’s domain, and do not put the spec on the app’s domain. Two names, two doors.
-
-If `pdf-frontmatter` is taken on GitHub as a user, use `pdf-frontmatter-org` and say so in the README.
+Registration was still “in progress” at purchase. Wait until the registrar shows the domain as active before changing DNS.
 
 ## 3. Put the site on the internet
 
 This project is already set up to publish on Vercel, which has a free tier.
 
 1. Create a Vercel account with the same GitHub account: [https://vercel.com/signup](https://vercel.com/signup)
-2. Click **Add new project**, pick the `pdf-frontmatter` repository, deploy.
-3. In Vercel → Project → Settings → Domains, add `pdf-frontmatter.org` and `prefacio.app`.
-4. Point both domains as Vercel tells you (they will show two DNS records to paste at your registrar).
-5. On `prefacio.app`, add a redirect to `https://pdf-frontmatter.org/app` if you want one door; or leave it as a second copy of the same site. Either is fine.
+2. Click **Add new project**, pick the `reisierx/pdf-frontmatter` repository, deploy.
+3. In Vercel → Project → Settings → Domains, add `pdf-frontmatter.org` and `www.pdf-frontmatter.org`.
+4. At the registrar, paste the records Vercel shows (usually two: one for the apex, one for `www`). Do not invent records. Do not point the domain at anything else.
+5. Leave the old GoDaddy/registrar parking page alone until those records are in.
 
 Spending: Vercel’s free tier is enough. Do not turn on a paid plan until the site is slow.
+
 
 ## 4. Give the writing desk a key
 
