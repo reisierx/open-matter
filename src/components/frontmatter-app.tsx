@@ -18,6 +18,7 @@ import { recordEnrichment } from "@/lib/server/stats";
 import { extractPdfText } from "@/lib/pdf/extract-client";
 import {
   answerMatchesGold,
+  repairCites,
   scoreEval,
   structuralChecks,
   verifyExamItem,
@@ -302,6 +303,18 @@ export function FrontmatterApp() {
         if (!yaml.trim()) starterCard(useName, usePages, useText);
         setQuestions(fallbackQuestions(null));
         setError(res.error);
+        const current = parseManifest(yaml);
+        if (current.ok) {
+          const hash = await contentSha256(useText);
+          const fixed = repairCites(
+            { ...current.value, content_sha256: hash, pages: usePages },
+            usePerPage,
+          );
+          const repaired = stringifyManifest(fixed);
+          setYaml(repaired);
+          await sitExam(repaired, usePerPage, useText, usePages);
+          return;
+        }
         setPhase("review");
         setStep(2);
         return;
@@ -309,20 +322,25 @@ export function FrontmatterApp() {
       const hash = await contentSha256(useText);
       const parsed = parseManifest(res.yaml);
       if (parsed.ok) {
-        setYaml(stringifyManifest({ ...parsed.value, content_sha256: hash, pages: usePages }));
-        setQuestions(res.questions?.length ? res.questions : fallbackQuestions(parsed.value));
-      } else {
-        setYaml(res.yaml);
-        setQuestions(res.questions ?? fallbackQuestions(null));
+        const fixed = repairCites(
+          { ...parsed.value, content_sha256: hash, pages: usePages },
+          usePerPage,
+        );
+        const yamlOut = stringifyManifest(fixed);
+        setYaml(yamlOut);
+        setQuestions(res.questions?.length ? res.questions : fallbackQuestions(fixed));
+        if (!isExpand) {
+          setFirstRead({ tokens: writeTokens, ms: performance.now() - started, pages: usePages });
+        }
+        await sitExam(yamlOut, usePerPage, useText, usePages);
+        return;
       }
+      setYaml(res.yaml);
+      setQuestions(res.questions ?? fallbackQuestions(null));
       if (!isExpand) {
         setFirstRead({ tokens: writeTokens, ms: performance.now() - started, pages: usePages });
       }
-      const yamlOut = parsed.ok
-        ? stringifyManifest({ ...parsed.value, content_sha256: hash, pages: usePages })
-        : res.yaml;
-      await sitExam(yamlOut, usePerPage, useText, usePages);
-      return;
+      await sitExam(res.yaml, usePerPage, useText, usePages);
     } catch {
       if (!yaml.trim()) starterCard(useName, usePages, useText);
       setQuestions(fallbackQuestions(null));
@@ -371,20 +389,31 @@ export function FrontmatterApp() {
     setPhase("evaluating");
     setStep(2);
     const parsed = parseManifest(yamlStr);
-    const structural = parsed.ok
-      ? structuralChecks(parsed.value, list)
-      : [{ id: "yaml", ok: false, label: parsed.error }];
+    let cardYaml = yamlStr;
+    let manifestForChecks = parsed.ok ? parsed.value : null;
+    if (parsed.ok) {
+      const fixed = repairCites(parsed.value, list);
+      const next = stringifyManifest(fixed);
+      if (next !== stringifyManifest(parsed.value)) {
+        cardYaml = next;
+        setYaml(next);
+      }
+      manifestForChecks = fixed;
+    }
+    const structural = manifestForChecks
+      ? structuralChecks(manifestForChecks, list)
+      : [{ id: "yaml", ok: false, label: parsed.ok ? "Invalid card." : parsed.error }];
     const questionRows: QuestionResult[] = [];
-    let tokens = estimateTokens(yamlStr || " ");
+    let tokens = estimateTokens(cardYaml || " ");
     const t0 = performance.now();
     for (const item of items.slice(0, 5)) {
       try {
-        let hop = await answerFromCard({ data: { question: item.question, yaml: yamlStr } });
+        let hop = await answerFromCard({ data: { question: item.question, yaml: cardYaml } });
         if (hop.ok && hop.status === "need_page" && hop.needPage > 0) {
           const pageText = list[hop.needPage - 1] || "";
           tokens += estimateTokens(pageText);
           hop = await answerFromCard({
-            data: { question: item.question, yaml: yamlStr, pageText, page: hop.needPage },
+            data: { question: item.question, yaml: cardYaml, pageText, page: hop.needPage },
           });
         }
         const answer = hop.ok ? hop.answer : hop.error;

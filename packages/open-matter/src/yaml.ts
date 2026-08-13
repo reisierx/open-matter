@@ -131,9 +131,10 @@ export function parseManifest(source: string): Validation {
 /** Serialise a manifest. Key order is preserved. */
 export function stringifyManifest(manifest: Manifest): string {
   return stringify(manifest, {
-    lineWidth: 88,
+    lineWidth: 0,
     minContentWidth: 0,
-    singleQuote: false,
+    defaultStringType: "QUOTE_DOUBLE",
+    defaultKeyType: "PLAIN",
   }).trimEnd() + "\n";
 }
 

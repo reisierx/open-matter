@@ -28,21 +28,40 @@ export type EvalResult = {
   ms: number;
 };
 
-function numbersIn(s: string): string[] {
-  return [...s.matchAll(/\d[\d,.]*%?/g)].map((m) => m[0].replace(/,/g, ""));
+function fold(s: string): string {
+  return s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+}
+
+function numberTokens(s: string): string[] {
+  const out = new Set<string>();
+  for (const m of s.matchAll(/\d[\d.,]*/g)) {
+    const raw = m[0].replace(/[.,]/g, "");
+    if (raw.length < 2) continue;
+    out.add(raw);
+    out.add(raw.replace(/^0+/, "") || "0");
+  }
+  const compact = s.replace(/\D/g, "");
+  if (compact.length >= 6) out.add(compact);
+  return [...out];
+}
+
+function hayHasNumber(hay: string, n: string): boolean {
+  if (!n) return false;
+  if (hay.includes(n)) return true;
+  const digits = hay.replace(/\D/g, "");
+  return digits.includes(n);
 }
 
 /** True if `hay` contains the numbers (or enough content words) from `needle`. */
 export function pageSupports(hay: string, needle: string): boolean {
   if (!hay || !needle) return false;
-  const text = hay.toLowerCase().replace(/,/g, "");
-  const nums = numbersIn(needle);
-  if (nums.length) return nums.some((n) => text.includes(n.toLowerCase()));
-  const words = needle
-    .toLowerCase()
-    .split(/[^a-z0-9]+/)
+  const text = fold(hay).replace(/,/g, "");
+  const nums = numberTokens(needle);
+  if (nums.length) return nums.some((n) => hayHasNumber(text, n.toLowerCase()));
+  const words = fold(needle)
+    .split(/[^\p{L}\p{N}]+/u)
     .filter((w) => w.length > 4);
-  if (!words.length) return text.includes(needle.toLowerCase().slice(0, 24));
+  if (!words.length) return text.includes(fold(needle).slice(0, 24));
   const hits = words.filter((w) => text.includes(w));
   return hits.length >= Math.min(2, words.length);
 }
@@ -50,6 +69,25 @@ export function pageSupports(hay: string, needle: string): boolean {
 export function verifyExamItem(item: ExamItem, perPage: string[]): boolean {
   if (!item.question || !item.answer || item.page < 1) return false;
   return pageSupports(perPage[item.page - 1] || "", item.answer);
+}
+
+/**
+ * Close the rebuild loop without inventing: retarget a numbered fact to the
+ * page that actually contains its numbers, or drop it if no page does.
+ */
+export function repairCites(manifest: Manifest, perPage: string[]): Manifest {
+  const facts = citedFacts(manifest);
+  if (!facts.length) return manifest;
+  const next = facts
+    .map((f) => {
+      if (!/\d/.test(f.fact)) return f;
+      if (f.page > 0 && pageSupports(perPage[f.page - 1] || "", f.fact)) return f;
+      const found = perPage.findIndex((p) => pageSupports(p, f.fact));
+      if (found >= 0) return { ...f, page: found + 1 };
+      return null;
+    })
+    .filter((f): f is { fact: string; page: number } => Boolean(f));
+  return { ...manifest, facts: next };
 }
 
 export function structuralChecks(manifest: Manifest, perPage: string[]): Check[] {
