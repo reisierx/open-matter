@@ -16,15 +16,18 @@ Registration was still “in progress” at purchase. Wait until the registrar s
 
 ## 3. Put the site on the internet
 
-This project is already set up to publish on Vercel, which has a free tier.
+Deployed 13 August 2026 to Vercel (Hobby), project `pdf-frontmatter`, from `reisierx/pdf-frontmatter`. The `*.vercel.app` URL already serves the site.
 
-1. Create a Vercel account with the same GitHub account: [https://vercel.com/signup](https://vercel.com/signup)
-2. Click **Add new project**, pick the `reisierx/pdf-frontmatter` repository, deploy.
-3. In Vercel → Project → Settings → Domains, add `pdf-frontmatter.org` and `www.pdf-frontmatter.org`.
-4. At the registrar, paste the records Vercel shows (usually two: one for the apex, one for `www`). Do not invent records. Do not point the domain at anything else.
-5. Leave the old GoDaddy/registrar parking page alone until those records are in.
+Still to do — attach the name:
+
+1. In Vercel → the `pdf-frontmatter` project → **Settings** → **Domains**
+2. Add `pdf-frontmatter.org`. Accept `www` if Vercel offers it.
+3. Copy the records Vercel shows. Do not invent them.
+4. At the registrar (where you bought the domain), paste those records. Remove any parking/A records the registrar added.
+5. Wait. Apex domains often take minutes, sometimes a few hours.
 
 Spending: Vercel’s free tier is enough. Do not turn on a paid plan until the site is slow.
+
 
 
 ## 4. Give the writing desk a key
