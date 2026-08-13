@@ -5,11 +5,11 @@ export const Route = createFileRoute("/why")({
   component: WhyPage,
   head: () => ({
     meta: [
-      { title: "Why PDFs need frontmatter — and why it matters most for local models" },
+      { title: "Why the card lives in the file — and why it matters most for local models" },
       {
         name: "description",
         content:
-          "AI already reads PDFs. The cost is time, and the models that feel it most are the small ones you run yourself.",
+          "AI already reads documents. The cost is time, and the models that feel it most are the small ones you run yourself. PDF is the first profile.",
       },
     ],
   }),
@@ -21,12 +21,14 @@ function WhyPage() {
       <Folio className="pt-12 sm:pt-16">
         <p className="text-sm tracking-[0.16em] text-muted uppercase">13 August 2026 · Lisboa</p>
         <h1 className="mt-3 max-w-3xl font-display text-4xl sm:text-5xl">
-          Why PDFs need frontmatter — and why it matters most for local models
+          Why the card lives in the file — and why small models feel it first
         </h1>
         <article className="mt-10 max-w-2xl space-y-5 text-ink-soft">
           <p>
-            AI already reads PDFs. That is not the question. The question is how
-            long it takes, and which models can still answer after the ingest.
+            AI already reads documents. That is not the question. The question
+            is how long it takes, and which models can still answer after the
+            ingest. PDF is where we ship first. The convention is the card
+            inside the file, not the format.
           </p>
           <p>
             Every chat, every agent, every pipeline that touches a contract pays
@@ -38,20 +40,21 @@ function WhyPage() {
           <p>
             The existing fixes park the understanding somewhere the file leaves
             behind. Adobe keeps it in the app. RAG keeps it in your database. A
-            sidecar next to the PDF is gone the first time someone emails the
-            document. Replacement formats ask the world to stop using PDF. Files
-            do not circulate that way. They are forwarded, archived, named
-            badly, and opened three years later by software that was not in the
-            room when they were written.
+            sidecar next to the file is gone the first time someone emails the
+            document. Replacement formats ask the world to stop using what they
+            already have. Files do not circulate that way. They are forwarded,
+            archived, named badly, and opened three years later by software that
+            was not in the room when they were written.
           </p>
           <p>
-            open-matter is a 1 KB YAML card stored as a normal PDF
-            attachment named{" "}
+            open-matter is a small YAML card that travels <em>with</em> the
+            file. Version 0.1 is the PDF profile: a normal attachment named{" "}
             <code className="font-mono text-xs">open-matter.yaml</code>.
             Acrobat has shown attachments since 2001. The pages do not change.
-            A frontier model writes the card once. Every later reader — a
-            frontier API, an 8B open-weight model, a 3B model on a phone — reads
-            a page of hints instead of the whole file.
+            DOCX, EPUB, HTML — same envelope, different pocket. A frontier model
+            writes the card once. Every later reader — a frontier API, an 8B
+            open-weight model, a 3B model on a phone — reads a page of hints
+            instead of the whole file.
           </p>
           <p>
             That last part is the claim that is hardest to copy and easiest to
@@ -68,7 +71,7 @@ function WhyPage() {
           <p>
             Writing the card costs one full read. At one read per document it
             saves nothing. From the second read on, the arithmetic is simple.
-            Tools that do not look for the card still get a normal PDF. That is
+            Tools that do not look for the card still get a normal file. That is
             the whole honesty contract: we do not claim every model on earth
             reads this today. We claim that five lines in an ingestion library
             is a smaller ask than a new file format, and that the models which
@@ -79,8 +82,8 @@ function WhyPage() {
             opens. So the consumers ship with the spec: a TypeScript reader, a
             Python reader, an MCP server that exposes read_manifest and
             write_manifest, and one free app that writes a card onto your file
-            and races it. Batch enrichment for folders is next. The spec stays
-            free.
+            and sits an exam written from the pages. Batch enrichment for
+            folders is next. The spec stays free.
           </p>
           <p>
             If you write local or open-weight software, look for the card

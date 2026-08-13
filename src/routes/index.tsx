@@ -2,19 +2,19 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Folio, SiteShell } from "@/components/site-shell";
 import { TheRace } from "@/components/the-race";
 import { SavingsCalculator } from "@/components/savings-calculator";
-import { WaitlistForm } from "@/components/waitlist-form";
+import { FileFlip } from "@/components/file-flip";
 
 export const Route = createFileRoute("/")({
   component: Home,
   head: () => ({
     meta: [
-      { title: "open-matter — stop making AI re-read the same PDF" },
+      { title: "open-matter — stop making AI re-read the same file" },
       {
         name: "description",
         content:
-          "A 1 KB card inside the file. A frontier model writes it once; every agent, and every small local model, reads it in milliseconds.",
+          "A 1 KB card inside the file. PDF first. Then other formats. A frontier model writes it once; every later read skips the parse.",
       },
-      { property: "og:title", content: "Stop making AI re-read the same PDF." },
+      { property: "og:title", content: "Stop making AI re-read the same file." },
       {
         property: "og:description",
         content: "Read it once. Every model benefits forever.",
@@ -33,12 +33,12 @@ function Home() {
     <SiteShell>
       <Folio className="pt-10 sm:pt-12">
         <h1 className="max-w-3xl font-display text-4xl leading-[1.05] sm:text-5xl">
-          Stop making AI re-read the same PDF.
+          Stop making AI re-read the same <FileFlip />.
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-ink-soft">
-          A 1 KB card inside the file carries what the document is and where
-          things live. A frontier model writes it once; every agent, and every
-          small local model, reads it in milliseconds.
+          A small card travels inside the file: what it is, the facts that
+          matter, where to look. PDF ships now. The convention is bigger than
+          one format. Write once; every later model skips the parse.
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
           <Link
@@ -182,9 +182,9 @@ function Home() {
             cta="Join the batch list"
           />
           <Audience
-            kicker="You have PDFs"
+            kicker="You have a file"
             title="It has to pass before it downloads."
-            body="Drop one PDF. The exam is written from the pages, not the card. Free."
+            body="PDF is the beachhead. Drop one. The exam is written from the pages, not the card."
             href="/app"
             cta="Try it on a PDF"
           />
@@ -218,8 +218,8 @@ function Home() {
             Coming: batch enrichment for whole archives
           </h2>
           <p className="mt-3 max-w-xl text-ink-soft">
-            Point it at a folder. Get every PDF back with a card. We store the
-            email and nothing else.
+            Point it at a folder. Get every file back with a card. PDF first.
+            We store the email and nothing else.
           </p>
           <WaitlistForm />
         </div>

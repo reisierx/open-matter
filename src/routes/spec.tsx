@@ -127,6 +127,7 @@ function SpecPage() {
         <p className="mt-4 max-w-2xl text-ink-soft">
           Normative text. Implementations that want to interoperate must follow
           the sentences that say <em>must</em>. Version 0.1 is the PDF profile.
+          The card is the convention; other formats get their own pocket later.
           A copyable file lives at{" "}
           <a href="/spec/open-matter-0.1.md">/spec/open-matter-0.1.md</a>.
         </p>

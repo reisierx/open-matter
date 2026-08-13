@@ -658,7 +658,17 @@ export function FrontmatterApp() {
               firstRead={firstRead}
               evalResult={evalResult}
               onBack={reset}
-              onRegenerate={() => void draftCard()}
+              onRegenerate={() => {
+                const misses = evalResult?.questions.filter((q) => !q.ok) ?? [];
+                const struct = evalResult?.structural.filter((c) => !c.ok).map((c) => c.label) ?? [];
+                const focus = [
+                  ...misses.map(
+                    (q) => `${q.question} — the pages say (p.${q.page}): ${q.gold}. Add a cited fact.`,
+                  ),
+                  ...struct,
+                ].join("\n");
+                void draftCard({ focus: focus || undefined });
+              }}
               onContinue={goAsk}
               onDownload={() => void attachAndDownload()}
             />
