@@ -1,3 +1,106 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #f3ede3;
+  --color-paper-2: #e8e0d2;
+  --color-folio: #faf6ef;
+  --color-ink: #1c1712;
+  --color-ink-soft: #3d352c;
+  --color-muted: #6f675c;
+  --color-faint: #8a8276;
+  --color-rule: #c9bdae;
+  --color-rule-strong: #a89886;
+  --color-oxblood: #7a2e36;
+  --color-oxblood-ink: #f3ede3;
+  --color-oxblood-deep: #5c2228;
+  --color-warn: #8a4b12;
+  --color-ok: #2f5d3a;
+
+  --font-display: "Fraunces", "Source Serif 4", "Palatino Linotype", Palatino, serif;
+  --font-serif: "Source Serif 4", "Palatino Linotype", Palatino, "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --radius-none: 0;
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+  --radius: 2px;
+
+  --shadow-folio: 0 1px 0 rgb(28 23 18 / 0.06), 0 12px 32px -18px rgb(28 23 18 / 0.28);
+  --shadow-rule: 0 0 0 1px rgb(28 23 18 / 0.08);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--color-paper);
+    color: var(--color-ink);
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    overflow-x: clip;
+    background-color: var(--color-paper);
+    background-image:
+      linear-gradient(180deg, rgb(243 237 227 / 0.4), rgb(243 237 227 / 0)),
+      radial-gradient(1200px 500px at 50% -80px, rgb(232 224 210 / 0.9), transparent 70%);
+    color: var(--color-ink);
+    font-family: var(--font-serif);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  a {
+    color: var(--color-oxblood);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+
+  a:hover {
+    color: var(--color-oxblood-deep);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-oxblood);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-oxblood) 22%, var(--color-paper));
+    color: var(--color-ink);
+  }
+
+  textarea,
+  input,
+  pre,
+  code {
+    font-family: var(--font-mono);
+  }
+}
+
 @layer components {
   .kicker {
     font-size: 0.75rem;
@@ -10,5 +113,15 @@
     margin-top: 0.75rem;
     max-width: 36rem;
     color: var(--color-ink-soft);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
