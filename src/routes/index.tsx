@@ -61,34 +61,56 @@ function Home() {
 
       <Folio className="mt-20">
         <p className="text-xs tracking-[0.18em] text-oxblood uppercase">How it works</p>
-        <h2 className="mt-2 font-display text-3xl sm:text-4xl">
-          Write once. Evaluate. Then every later read is the small number.
+        <h2 className="mt-3 max-w-3xl text-balance font-display text-3xl leading-[1.12] sm:text-5xl">
+          A document should only have to be understood once.
         </h2>
-        <ul className="mt-6 grid gap-6 sm:grid-cols-3">
-          <li className="border-t border-rule pt-4">
-            <h3 className="font-display text-xl">Stop chewing the same twelve pages.</h3>
-            <p className="mt-2 text-sm text-ink-soft">
-              Every chat and every agent pays the full parse again. Token
-              prices fall. The seconds do not. The understanding has to leave
-              with the file.
-            </p>
+        <div className="mt-6 max-w-2xl space-y-4 text-lg text-ink-soft">
+          <p>
+            Every time someone asks an AI about a file, the model starts from
+            nothing. It reads the whole thing. You wait. You pay. The next
+            person does the same work to the same file.
+          </p>
+          <p>
+            That would be fine if the document had changed. It hasn’t. The
+            waste is that the understanding never travels with the thing it is
+            about.
+          </p>
+        </div>
+        <ol className="mt-12 max-w-3xl">
+          <li className="grid gap-2 border-t border-rule py-8 sm:grid-cols-[3.5rem_1fr] sm:gap-8">
+            <p className="font-display text-2xl text-oxblood">i</p>
+            <div>
+              <h3 className="font-display text-2xl">A frontier model reads the file once</h3>
+              <p className="mt-2 text-ink-soft">
+                It writes a small card: what this file is, the facts that
+                matter, and which page they live on. That is the only expensive
+                step.
+              </p>
+            </div>
           </li>
-          <li className="border-t border-rule pt-4">
-            <h3 className="font-display text-xl">It does not download until it passes.</h3>
-            <p className="mt-2 text-sm text-ink-soft">
-              A frontier model writes the card. The pages write the
-              evaluation. Fail, and we rebuild. We do not ship a card that
-              failed.
-            </p>
+          <li className="grid gap-2 border-t border-rule py-8 sm:grid-cols-[3.5rem_1fr] sm:gap-8">
+            <p className="font-display text-2xl text-oxblood">ii</p>
+            <div>
+              <h3 className="font-display text-2xl">We check the card against the pages</h3>
+              <p className="mt-2 text-ink-soft">
+                The questions come from the document, not from the card. If a
+                number is wrong or missing, we rewrite. A card that fails is
+                not attached.
+              </p>
+            </div>
           </li>
-          <li className="border-t border-rule pt-4">
-            <h3 className="font-display text-xl">Same file. The map is already inside.</h3>
-            <p className="mt-2 text-sm text-ink-soft">
-              Nothing visible changes. Later readers open 1 KB, then one page.
-              PDF ships now. The pocket is the only thing that will change.
-            </p>
+          <li className="grid gap-2 border-t border-rule py-8 sm:grid-cols-[3.5rem_1fr] sm:gap-8">
+            <p className="font-display text-2xl text-oxblood">iii</p>
+            <div>
+              <h3 className="font-display text-2xl">You get the same file back</h3>
+              <p className="mt-2 text-ink-soft">
+                Nothing on the page looks different. The card sits inside as a
+                normal attachment. The next model — Claude, Grok, something on
+                a laptop — opens that first, then only the page it needs.
+              </p>
+            </div>
           </li>
-        </ul>
+        </ol>
       </Folio>
 
       <Folio roman="i" className="mt-20">
