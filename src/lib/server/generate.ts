@@ -10,6 +10,7 @@ type GenerateInput = {
   pages: number;
   filename: string;
   existingYaml?: string;
+  focus?: string;
 };
 
 function parseQuestions(block: string): string[] {
@@ -47,6 +48,7 @@ export const generateManifest = createServerFn({ method: "POST" })
     pages: Math.max(1, Math.min(5000, Math.floor(Number(input.pages) || 1))),
     filename: String(input.filename ?? "document.pdf").slice(0, 180),
     existingYaml: input.existingYaml ? String(input.existingYaml).slice(0, 8000) : undefined,
+    focus: input.focus ? String(input.focus).slice(0, 400) : undefined,
   }))
   .handler(async ({ data }) => {
     const request = getRequest();
@@ -116,6 +118,7 @@ Rules:
     const user = `Filename: ${data.filename}
 Page count: ${data.pages}
 ${data.existingYaml ? `\nAn existing card is present. Improve it if needed, preserve unknown keys:\n${data.existingYaml}\n` : ""}
+${data.focus ? `\nA reader asked this and the card missed. Improve key_sections so this question maps to the right page, and put the figure in the summary if it is in the text:\n${data.focus}\n` : ""}
 UNTRUSTED DOCUMENT TEXT BEGINS
 -----
 ${data.text || "(no extractable text — likely a scan)"}

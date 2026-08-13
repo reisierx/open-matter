@@ -5,7 +5,7 @@
 - **Headline.** “Stop making AI re-read the same PDF.” Time and capability lead. Cost supports.
 - **Category copy.** Portable document memory / self-describing manifest. Not “cache” or “CDN”.
 - **Value display.** At least two of: multiple, percentage, money. Never a dollar figure below $1. Fleet calculator also shows hours. Break-even is read two.
-- **App.** No sample. Drop → card → ask → race on their file → download.
+- **App race.** Optional after review (skip to download). Retrieval trusts `key_sections` names, not cover-page keywords. A miss offers “open that page” or “expand the card.” Plain lane never pretends to have answered.
 - **Nav.** Home, App, Spec. One wordmark: open-matter.
 - **MCP.** `packages/mcp-open-matter`.
 - **GitHub.** `reisierx/open-matter`. The old `reisierx/pdf-frontmatter` repo is a pointer.

@@ -90,6 +90,14 @@ const FAQ = [
     q: "Is latency just a cost problem?",
     a: "No. Prefill is a wall-clock tax proportional to document size. Token prices can fall; the seconds to ingest eight pages do not, unless you skip the ingest. See “Can I Buy Your KV Cache?” (arXiv 2606.13361) and Lost in the Middle (Liu et al., TACL 2024).",
   },
+  {
+    q: "Why not just use a bigger context window?",
+    a: "Even long-context models degrade in the middle of the input (Liu et al., TACL 2024). Small and open models fall off a cliff past 4K tokens (M4LE). A card is not more context. It is less: a map, so the model loads one page instead of the haystack.",
+  },
+  {
+    q: "Can a folder of cards become a knowledge graph?",
+    a: "That is the downstream product, not a 0.1 guarantee. GraphRAG-style systems spend most of their cost on entity extraction. Cards ship entities and sections already named. Cross-document resolution still needs validation, so we frame it as exploration.",
+  },
 ];
 
 function SpecPage() {

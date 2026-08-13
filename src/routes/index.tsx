@@ -110,30 +110,42 @@ function Home() {
       </Folio>
 
       <Folio roman="i" className="mt-20">
-        <h2 className="font-display text-3xl sm:text-4xl">What the card enables</h2>
+        <h2 className="mt-2 font-display text-3xl sm:text-4xl">What the card enables</h2>
+        <p className="mt-3 max-w-2xl text-ink-soft">
+          A 1 KB map is not a cache. It is the same pattern as ID3, EXIF, and
+          package.json: a tiny embedded layer that other software can trust.
+        </p>
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           <Enable
-            title="Capability transfer"
-            body="Write the card once with a frontier model; your on-device and open-weight models read it forever."
+            title="Small models can finish the job"
+            body="Long documents lose small models in the middle. A 3B model given a pre-digested card has beaten a frontier model still hunting through raw pages. Write once with a large model; a local 8B reads it forever."
           />
           <Enable
-            title="Precise retrieval"
-            body="Filter to the right document and the right page before spending a token guessing."
+            title="Open the right page first"
+            body="Metadata-filtered retrieval lifts precision by about 15%, and quality nearly 2×, because the agent stops guessing which chunk matters. The card is that filter: document, then page, then tokens."
           />
           <Enable
-            title="Progressive disclosure"
-            body="Agents read a 1 KB card to decide what to open — the same pattern Claude Skills use."
+            title="Decide before you load"
+            body="Claude Skills route on ~100-token descriptions. Eight skills cost ~500 tokens at startup instead of 70,000. Agents read this card the same way: one kilobyte to decide whether to open the file."
           />
           <Enable
-            title="Staleness hash"
-            body="A content hash tells any agent instantly whether its cached understanding is still valid."
+            title="Know when the memory is stale"
+            body="Agent-memory systems name staleness as an open problem. A content hash on the card is cache-validity: if the pages changed, the understanding is void. Signed cards are next, C2PA-adjacent."
           />
           <Enable
-            title="Point it at a folder, get a graph"
-            body="Documents as nodes, shared entities as edges. Coming. Exploration, not guaranteed truth."
+            title="A folder becomes a graph"
+            body="Entity extraction is the expensive step in every GraphRAG pipeline. Cards ship it pre-computed. Documents as nodes, shared names as edges. Coming — exploration, not guaranteed truth."
             coming
           />
         </div>
+        <p className="mt-5 text-sm text-muted">
+          Sources, cited on the{" "}
+          <Link to="/spec" hash="faq">
+            spec FAQ
+          </Link>{" "}
+          and in the{" "}
+          <Link to="/why">essay</Link>.
+        </p>
       </Folio>
 
       <Folio roman="ii" className="mt-20">

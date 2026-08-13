@@ -13,12 +13,7 @@ import {
 import { answerFromCard, generateManifest } from "@/lib/server/generate";
 import { recordEnrichment } from "@/lib/server/stats";
 import { extractPdfText } from "@/lib/pdf/extract-client";
-import {
-  ASSUMPTIONS,
-  documentVerdict,
-  formatMultiple,
-  verdictPrimary,
-} from "@/lib/savings";
+import { ASSUMPTIONS, documentVerdict, verdictPrimary } from "@/lib/savings";
 
 const MAX_BYTES = 8 * 1024 * 1024;
 
@@ -55,36 +50,9 @@ function fallbackQuestions(manifest: Manifest | null): string[] {
 }
 
 const STOP = new Set([
-  "what",
-  "which",
-  "where",
-  "when",
-  "does",
-  "did",
-  "the",
-  "this",
-  "that",
-  "from",
-  "with",
-  "have",
-  "been",
-  "were",
-  "their",
-  "about",
-  "into",
-  "than",
-  "then",
-  "your",
-  "they",
-  "them",
-  "and",
-  "for",
-  "are",
-  "was",
-  "how",
-  "who",
-  "its",
-  "not",
+  "what", "which", "where", "when", "does", "did", "the", "this", "that", "from",
+  "with", "have", "been", "were", "their", "about", "into", "than", "then", "your",
+  "they", "them", "and", "for", "are", "was", "how", "who", "its", "not",
 ]);
 
 function words(s: string): string[] {
@@ -94,49 +62,91 @@ function words(s: string): string[] {
     .filter((w) => w.length > 2 && !STOP.has(w));
 }
 
-/** Use the card's section map, then pick the page(s) whose text actually matches the question. */
+function stem(w: string): string {
+  const s = w.toLowerCase();
+  if (s.endsWith("ies") && s.length > 5) return `${s.slice(0, -3)}y`;
+  if (s.endsWith("ing") && s.length > 6) return s.slice(0, -3);
+  if (s.endsWith("es") && s.length > 4) return s.slice(0, -2);
+  if (s.endsWith("s") && s.length > 3 && !s.endsWith("ss")) return s.slice(0, -1);
+  return s;
+}
+
+/** Trust the card's section names. Cover pages repeat keywords and win lexical search. */
 function pickPages(
   question: string,
   manifest: Manifest | null,
   perPage: string[],
-): { pages: number[]; text: string } {
-  const qWords = words(question);
-  const sections = Object.entries(manifest?.key_sections ?? {});
-  const sectionPages = new Map<number, string>();
-  for (const [name, p] of sections) {
-    const page = Number(p) || 0;
-    if (page > 0) sectionPages.set(page, name);
-  }
-
-  const scored = perPage.map((text, i) => {
-    const page = i + 1;
-    const hay = `${sectionPages.get(page)?.replaceAll("_", " ") ?? ""} ${text}`.toLowerCase();
-    let score = 0;
-    for (const w of qWords) {
-      if (hay.includes(w)) score += 1;
-    }
-    if (sectionPages.has(page)) score += 0.5;
-    const name = sectionPages.get(page);
-    if (name) {
-      for (const part of name.split("_")) {
-        if (part.length > 2 && question.toLowerCase().includes(part)) score += 2;
-      }
-    }
-    return { page, score };
+  forcePages?: number[],
+): { pages: number[]; section: string | null; text: string } {
+  const pack = (pages: number[], section: string | null) => ({
+    pages,
+    section,
+    text: pages.map((p) => `--- page ${p} ---\n${perPage[p - 1] || ""}`).join("\n\n"),
   });
 
-  scored.sort((a, b) => b.score - a.score);
-  const best = scored[0]?.score ?? 0;
-  let chosen = scored.filter((s) => s.score > 0 && s.score >= best - 0.5).slice(0, 2);
-  if (!chosen.length) {
-    const fallback = [...sectionPages.keys()][0] || 1;
-    chosen = [{ page: fallback, score: 0 }];
+  if (forcePages?.length) {
+    return pack([...new Set(forcePages.filter((p) => p > 0))], null);
   }
-  const pages = chosen.map((c) => c.page);
-  const text = pages
-    .map((p) => `--- page ${p} ---\n${perPage[p - 1] || ""}`)
-    .join("\n\n");
-  return { pages, text };
+
+  const q = question.toLowerCase();
+  const qStems = new Set(words(question).map(stem));
+  const sections = Object.entries(manifest?.key_sections ?? {});
+
+  let best: { name: string; page: number; score: number } | null = null;
+  for (const [name, rawPage] of sections) {
+    const page = Number(rawPage) || 0;
+    if (!page) continue;
+    let score = 0;
+    for (const part of name.split("_").filter((p) => p.length > 2)) {
+      if (qStems.has(stem(part)) || q.includes(part)) score += 4;
+    }
+    if (/\b(percent|percentage|%|how many|how much|allocation|founder)\b/.test(q)) {
+      if (/alloc|founder|supply|cap/.test(name)) score += 10;
+    }
+    if (!best || score > best.score) best = { name, page, score };
+  }
+
+  if (best && best.score >= 4) {
+    const pages = [best.page];
+    if (perPage[best.page]) pages.push(best.page + 1);
+    return pack(pages, best.name);
+  }
+
+  const scored = perPage.map((body, i) => {
+    const page = i + 1;
+    const hay = body.toLowerCase();
+    let score = 0;
+    for (const w of qStems) {
+      if (hay.includes(w)) score += 1;
+    }
+    if (page === 1) score *= 0.3;
+    return { page, score };
+  });
+  scored.sort((a, b) => b.score - a.score);
+  const top = scored.filter((s) => s.score > 0).slice(0, 2);
+  const pages = top.length ? top.map((s) => s.page) : [sections[0] ? Number(sections[0][1]) || 1 : 1];
+  return pack(pages, null);
+}
+
+function looksLikeMiss(answer: string): boolean {
+  return /do not contain|does not contain|doesn't contain|not contain the answer|cannot find|could not find|no (such )?(figure|percentage|amount)/i.test(
+    answer,
+  );
+}
+
+function hintFromAnswer(
+  answer: string,
+  manifest: Manifest | null,
+): { section: string; page: number } | null {
+  const named = answer.match(/\b([a-z][a-z0-9_]{2,})\s*:\s*(\d{1,4})\b/i);
+  if (named) return { section: named[1], page: Number(named[2]) };
+  for (const [name, p] of Object.entries(manifest?.key_sections ?? {})) {
+    const hay = answer.toLowerCase();
+    if (hay.includes(name) || hay.includes(name.replaceAll("_", " "))) {
+      return { section: name, page: Number(p) || 0 };
+    }
+  }
+  return null;
 }
 
 export function FrontmatterApp() {
@@ -159,6 +169,8 @@ export function FrontmatterApp() {
   const [savedName, setSavedName] = useState("");
   const [plain, setPlain] = useState<Lane | null>(null);
   const [carded, setCarded] = useState<Lane | null>(null);
+  const [missed, setMissed] = useState(false);
+  const [hint, setHint] = useState<{ section: string; page: number } | null>(null);
 
   const validation = useMemo(() => (yaml.trim() ? parseManifest(yaml) : null), [yaml]);
   const manifest = validation?.ok ? validation.value : existing?.manifest ?? null;
@@ -176,6 +188,8 @@ export function FrontmatterApp() {
     setPlain(null);
     setCarded(null);
     setQuestion("");
+    setMissed(false);
+    setHint(null);
     if (file.type && file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
       setPhase("error");
       setError("That is not a PDF. Choose a file that ends in .pdf.");
@@ -224,11 +238,12 @@ export function FrontmatterApp() {
     extractedPages?: number;
     name?: string;
     existingYaml?: string;
+    focus?: string;
   }) {
     const useText = opts?.extractedText ?? text;
     const usePages = opts?.extractedPages ?? pages;
     const useName = opts?.name ?? filename;
-    const useExisting = opts?.existingYaml ?? existing?.yaml ?? undefined;
+    const useExisting = opts?.existingYaml ?? existing?.yaml ?? yaml ?? undefined;
     setPhase("writing");
     setError(null);
     try {
@@ -238,6 +253,7 @@ export function FrontmatterApp() {
           pages: usePages,
           filename: useName,
           existingYaml: useExisting,
+          focus: opts?.focus,
         },
       });
       if (!res.ok) {
@@ -292,7 +308,7 @@ export function FrontmatterApp() {
     if (!questions.length) setQuestions(fallbackQuestions(parsed.value));
   }
 
-  async function runRace(asked: string) {
+  async function runRace(asked: string, forcePages?: number[]) {
     const q = asked.trim();
     if (!q) return;
     setQuestion(q);
@@ -301,14 +317,17 @@ export function FrontmatterApp() {
     setError(null);
     timers.current.forEach((id) => window.clearTimeout(id));
     timers.current = [];
+    setMissed(false);
+    setHint(null);
 
+    const target = pickPages(q, manifest, perPage, forcePages);
+    const pageLabel = target.pages.length ? target.pages.join(" and ") : "?";
+    const sectionLabel = target.section ? target.section.replaceAll("_", " ") : null;
     const fullTokens = estimateTokens(text);
-    const cardTokens = estimateTokens(yaml || " ");
+    const cardTokens = estimateTokens(yaml || " ") + estimateTokens(target.text || " ");
     const fullMs = Math.round(Math.max(400, pages * ASSUMPTIONS.secondsPerPage * 1000));
     const cardMs = Math.round(ASSUMPTIONS.secondsPerCard * 1000);
     const started = performance.now();
-    const target = pickPages(q, manifest, perPage);
-    const pageLabel = target.pages.length ? target.pages.join(" and ") : "?";
 
     setPlain({ tokens: 0, ms: 0, label: `Reading page 1 of ${pages || 1}`, answer: "", done: false });
     setCarded({ tokens: 0, ms: 0, label: "Reading the card", answer: "", done: false });
@@ -325,7 +344,7 @@ export function FrontmatterApp() {
         setCarded({
           tokens: Math.round(cardTokens * p),
           ms: Math.round(performance.now() - started),
-          label: target.pages.length ? `Card → page ${pageLabel}` : "Reading the card",
+          label: sectionLabel ? `${sectionLabel} · p.${pageLabel}` : `Card → page ${pageLabel}`,
           answer: "",
           done: false,
         });
@@ -339,11 +358,15 @@ export function FrontmatterApp() {
     play(cardMs + 10, () => {
       void (async () => {
         const res = await askPromise;
+        const answer = res.ok ? res.answer : res.error;
+        const miss = Boolean(answer && looksLikeMiss(answer));
+        setMissed(miss);
+        setHint(answer ? hintFromAnswer(answer, manifest) : null);
         setCarded({
           tokens: cardTokens,
           ms: Math.round(performance.now() - started),
-          label: target.pages.length ? `Answered from page ${pageLabel}` : "Card read",
-          answer: res.ok ? res.answer : res.error,
+          label: sectionLabel ? `${sectionLabel} · p.${pageLabel}` : `Opened page ${pageLabel}`,
+          answer: answer ?? "",
           done: true,
         });
       })();
@@ -365,8 +388,8 @@ export function FrontmatterApp() {
       setPlain({
         tokens: fullTokens,
         ms: fullMs,
-        label: "Would have finished the file",
-        answer: "Not run. Token count is measured from your file; this lane is a paced replay.",
+        label: "Whole file, counted from your pages",
+        answer: "",
         done: true,
       });
       setPhase("verdict");
@@ -430,6 +453,8 @@ export function FrontmatterApp() {
     setSavedName("");
     setPlain(null);
     setCarded(null);
+    setMissed(false);
+    setHint(null);
   }
 
   return (
@@ -480,7 +505,7 @@ export function FrontmatterApp() {
               onBack={reset}
               onRegenerate={() => void draftCard()}
               onContinue={goAsk}
-              onKeepAndRace={goAsk}
+              onDownload={() => void attachAndDownload()}
             />
           ) : null}
 
@@ -503,12 +528,19 @@ export function FrontmatterApp() {
               finished={phase === "verdict"}
               verdict={verdict}
               error={error}
+              missed={missed}
+              hint={hint}
               onDownload={() => void attachAndDownload()}
-              onAgain={() => {
+              onAsk={() => {
                 setPhase("ask");
                 setPlain(null);
                 setCarded(null);
+                setMissed(false);
               }}
+              onRetryHint={
+                hint?.page ? () => void runRace(question, [hint.page, hint.page + 1]) : undefined
+              }
+              onExpand={() => void draftCard({ existingYaml: yaml, focus: question })}
             />
           ) : null}
 
@@ -639,7 +671,7 @@ function Review({
   onBack,
   onRegenerate,
   onContinue,
-  onKeepAndRace,
+  onDownload,
 }: {
   phase: Phase;
   filename: string;
@@ -655,7 +687,7 @@ function Review({
   onBack: () => void;
   onRegenerate: () => void;
   onContinue: () => void;
-  onKeepAndRace: () => void;
+  onDownload: () => void;
 }) {
   const already = phase === "has_card";
   return (
@@ -699,35 +731,26 @@ function Review({
           <input type="checkbox" checked={showYaml} onChange={(e) => setShowYaml(e.target.checked)} />
           Edit the raw card (YAML)
         </label>
-        <div className="flex flex-col gap-2 sm:flex-row">
-          {already ? (
-            <>
-              <button
-                type="button"
-                onClick={onKeepAndRace}
-                className="h-11 border border-oxblood bg-oxblood px-5 text-sm text-oxblood-ink hover:bg-oxblood-deep"
-              >
-                Keep it and race
-              </button>
-              <button type="button" onClick={onRegenerate} className="h-11 border border-rule px-5 text-sm">
-                Replace the card
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                type="button"
-                onClick={onContinue}
-                disabled={!validation?.ok}
-                className="h-11 border border-oxblood bg-oxblood px-5 text-sm text-oxblood-ink hover:bg-oxblood-deep disabled:opacity-50"
-              >
-                Looks right — continue
-              </button>
-              <button type="button" onClick={onRegenerate} className="h-11 border border-rule px-5 text-sm">
-                Regenerate
-              </button>
-            </>
-          )}
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+          <button
+            type="button"
+            onClick={onContinue}
+            disabled={!validation?.ok}
+            className="h-11 border border-oxblood bg-oxblood px-5 text-sm text-oxblood-ink hover:bg-oxblood-deep disabled:opacity-50"
+          >
+            {already ? "Keep it and try a question" : "Try a question"}
+          </button>
+          <button
+            type="button"
+            onClick={onDownload}
+            disabled={!validation?.ok}
+            className="h-11 border border-rule px-5 text-sm disabled:opacity-50"
+          >
+            Skip, attach and download
+          </button>
+          <button type="button" onClick={onRegenerate} className="h-11 border border-rule px-5 text-sm">
+            {already ? "Replace the card" : "Regenerate"}
+          </button>
           <button type="button" onClick={onBack} className="h-11 px-3 text-sm text-muted">
             Back
           </button>
@@ -785,10 +808,10 @@ function Ask({
   const [custom, setCustom] = useState("");
   return (
     <div>
-      <h1 className="font-display text-3xl sm:text-4xl">Now race it on your own document.</h1>
+      <h1 className="font-display text-3xl sm:text-4xl">Ask it something only this file knows.</h1>
       <p className="mt-2 text-sm text-ink-soft">
-        The card side answers for real. The plain side is a paced replay of the
-        tokens your file would cost.
+        The card names the section. We open that page and answer. Optional — you
+        can skip this and just download.
       </p>
       <ul className="mt-4 space-y-2">
         {questions.map((q) => (
@@ -838,8 +861,12 @@ function RaceOnFile({
   finished,
   verdict,
   error,
+  missed,
+  hint,
   onDownload,
-  onAgain,
+  onAsk,
+  onRetryHint,
+  onExpand,
 }: {
   question: string;
   plain: Lane | null;
@@ -847,8 +874,12 @@ function RaceOnFile({
   finished: boolean;
   verdict: ReturnType<typeof documentVerdict>;
   error: string | null;
+  missed: boolean;
+  hint: { section: string; page: number } | null;
   onDownload: () => void;
-  onAgain: () => void;
+  onAsk: () => void;
+  onRetryHint?: () => void;
+  onExpand: () => void;
 }) {
   return (
     <div className="min-h-0 overflow-y-auto">
@@ -859,28 +890,69 @@ function RaceOnFile({
         </p>
       ) : null}
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
-        <LaneView kicker="i" title="Plain PDF" lane={plain} />
-        <LaneView kicker="ii" title="With the card" lane={carded} accent />
+        <LaneView
+          kicker="i"
+          title="Whole file"
+          lane={plain}
+          note="Counted from your pages. Not sent to a model."
+        />
+        <LaneView kicker="ii" title="Card + mapped page" lane={carded} accent />
       </div>
       {finished ? (
         <div className="mt-4">
-          <p className="font-display text-xl text-oxblood">{verdictPrimary(verdict)}</p>
-          {verdict.moneyLine ? <p className="mt-1 text-sm text-ink-soft">{verdict.moneyLine}</p> : null}
-          <p className="mt-2 text-xs text-faint">
-            Plain lane: paced replay; token counts measured from your file. Card
-            lane: a real answer from the card and the mapped page.
-          </p>
-          <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-            <button
-              type="button"
-              onClick={onDownload}
-              className="h-11 border border-oxblood bg-oxblood px-5 text-sm text-oxblood-ink"
-            >
-              Attach the card and download
-            </button>
-            <button type="button" onClick={onAgain} className="h-11 border border-rule px-5 text-sm">
+          {missed ? (
+            <>
+              <p className="font-display text-xl">The card did not land on the answer.</p>
+              {hint?.page ? (
+                <p className="mt-2 text-sm text-ink-soft">
+                  It pointed at{" "}
+                  <span className="font-medium text-ink">{hint.section.replaceAll("_", " ")}</span> on
+                  page {hint.page}. Open that page, or expand the card so the next
+                  read finds it.
+                </p>
+              ) : (
+                <p className="mt-2 text-sm text-ink-soft">
+                  Expand the card with this question, or ask a different one.
+                </p>
+              )}
+            </>
+          ) : (
+            <>
+              <p className="font-display text-xl text-oxblood">{verdictPrimary(verdict)}</p>
+              {verdict.moneyLine ? <p className="mt-1 text-sm text-ink-soft">{verdict.moneyLine}</p> : null}
+            </>
+          )}
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+            {missed && onRetryHint ? (
+              <button
+                type="button"
+                onClick={onRetryHint}
+                className="h-11 border border-oxblood bg-oxblood px-5 text-sm text-oxblood-ink"
+              >
+                Open page {hint?.page} and try again
+              </button>
+            ) : null}
+            {missed ? (
+              <button type="button" onClick={onExpand} className="h-11 border border-rule px-5 text-sm">
+                Expand the card
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={onDownload}
+                className="h-11 border border-oxblood bg-oxblood px-5 text-sm text-oxblood-ink"
+              >
+                Attach the card and download
+              </button>
+            )}
+            <button type="button" onClick={onAsk} className="h-11 border border-rule px-5 text-sm">
               Ask another
             </button>
+            {missed ? (
+              <button type="button" onClick={onDownload} className="h-11 px-3 text-sm text-muted">
+                Download anyway
+              </button>
+            ) : null}
           </div>
         </div>
       ) : null}
@@ -893,11 +965,13 @@ function LaneView({
   title,
   lane,
   accent,
+  note,
 }: {
   kicker: string;
   title: string;
   lane: Lane | null;
   accent?: boolean;
+  note?: string;
 }) {
   return (
     <div className={`border border-rule p-3 ${accent ? "bg-paper-2/40" : "bg-folio"}`}>
@@ -909,6 +983,7 @@ function LaneView({
           <p className="font-display text-2xl tabular-nums">{lane.tokens.toLocaleString("en-GB")}</p>
           <p className="text-xs text-muted">{(lane.ms / 1000).toFixed(2)}s</p>
           {lane.done && lane.answer ? <p className="mt-2 text-sm text-ink-soft">{lane.answer}</p> : null}
+          {note ? <p className="mt-2 text-xs text-faint">{note}</p> : null}
         </>
       ) : (
         <p className="mt-2 text-sm text-muted">Waiting…</p>
