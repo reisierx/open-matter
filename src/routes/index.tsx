@@ -41,7 +41,7 @@ function Home() {
             to="/app"
             className="inline-flex h-12 items-center justify-center border border-oxblood bg-oxblood px-6 text-sm text-oxblood-ink no-underline hover:bg-oxblood-deep hover:text-oxblood-ink"
           >
-            Try it on a PDF
+            Try it on a .pdf
           </Link>
           <Link
             to="/spec"
@@ -60,45 +60,35 @@ function Home() {
       </Folio>
 
       <Folio className="mt-20">
-        <p className="text-xs tracking-[0.18em] text-oxblood uppercase">Works with local models</p>
+        <p className="text-xs tracking-[0.18em] text-oxblood uppercase">How it works</p>
         <h2 className="mt-2 font-display text-3xl sm:text-4xl">
-          Write the card once with a frontier model. Your on-device models read it forever.
+          Write once. Evaluate. Then every later read is the small number.
         </h2>
         <ul className="mt-6 grid gap-6 sm:grid-cols-3">
           <li className="border-t border-rule pt-4">
-            <h3 className="font-display text-xl">Small models fail on long documents</h3>
+            <h3 className="font-display text-xl">Why</h3>
             <p className="mt-2 text-sm text-ink-soft">
-              Needle-in-haystack accuracy on small models ranges from 22% to 92%.
-              The gap vs closed models widens past 4K tokens. An 8B model drops
-              about 20 points from 8K to 32K context.
+              Every chat and every agent pays the full parse again. Token prices
+              fall. The seconds to chew twelve pages do not. The understanding
+              has to travel with the file.
             </p>
           </li>
           <li className="border-t border-rule pt-4">
-            <h3 className="font-display text-xl">A card written once fixes that</h3>
+            <h3 className="font-display text-xl">How</h3>
             <p className="mt-2 text-sm text-ink-soft">
-              Pre-digested artifacts reverse the gap. A 1 KB card is the section
-              map and the entities — the thing a 3B model can actually hold.
+              A frontier model writes a card. An evaluation written from the
+              pages — not from the card — has to pass. Fail, and we rebuild.
+              We do not download a card that failed.
             </p>
           </li>
           <li className="border-t border-rule pt-4">
-            <h3 className="font-display text-xl">On a phone, it also saves battery</h3>
+            <h3 className="font-display text-xl">What</h3>
             <p className="mt-2 text-sm text-ink-soft">
-              Local inference can drain 6–25% of a phone battery in under 15
-              minutes. Most of that energy is data movement. Every skipped
-              re-parse saves seconds and joules.
+              The same file, plus a 1 KB card inside. Nothing visible changes.
+              Later readers open the card, then one page. PDF ships now.
             </p>
           </li>
         </ul>
-        <p className="mt-5 text-sm text-muted">
-          Sources, cited on the{" "}
-          <Link to="/spec" hash="faq">
-            spec FAQ
-          </Link>
-          . Consume a card from any local stack:
-        </p>
-        <pre className="mt-3 max-w-full overflow-x-auto bg-ink p-3 text-[0.7rem] leading-relaxed text-paper">
-          {`npx mcp-open-matter   # read_manifest / write_manifest`}
-        </pre>
       </Folio>
 
       <Folio roman="i" className="mt-20">
@@ -225,12 +215,16 @@ npx mcp-open-matter
         <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
           <a
             href="https://github.com/reisierx/open-matter/tree/main/skills"
+            target="_blank"
+            rel="noreferrer"
             className="inline-flex h-12 items-center justify-center border border-oxblood bg-oxblood px-6 text-sm text-oxblood-ink no-underline hover:bg-oxblood-deep hover:text-oxblood-ink"
           >
             Get the skills
           </a>
           <a
             href="https://github.com/reisierx/open-matter/tree/main/packages/mcp-open-matter"
+            target="_blank"
+            rel="noreferrer"
             className="inline-flex h-12 items-center justify-center border border-rule px-6 text-sm text-ink no-underline hover:border-ink"
           >
             MCP server
@@ -248,7 +242,7 @@ npx mcp-open-matter
           <h2 className="mt-2 font-display text-3xl">A convention, CC0. Code, MIT.</h2>
           <p className="mt-3 max-w-2xl text-sm text-ink-soft">
             TypeScript, Python, and an MCP server in the repo. Complementary to{" "}
-            <a href="https://doclang.ai" rel="noreferrer">
+            <a href="https://doclang.ai" target="_blank" rel="noreferrer">
               DocLang
             </a>
             : that project describes what a machine-readable document looks like.
@@ -256,6 +250,8 @@ npx mcp-open-matter
           </p>
           <a
             href="https://github.com/reisierx/open-matter"
+            target="_blank"
+            rel="noreferrer"
             className="mt-5 inline-block text-sm"
           >
             github.com/reisierx/open-matter

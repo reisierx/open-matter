@@ -59,6 +59,8 @@ export function SiteFooter() {
           </Link>
           <a
             href="https://github.com/reisierx/open-matter"
+            target="_blank"
+            rel="noreferrer"
             className="text-ink-soft no-underline hover:text-oxblood"
           >
             GitHub

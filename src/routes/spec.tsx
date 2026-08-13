@@ -338,7 +338,10 @@ function SpecPage() {
         <Section n="9" title="License">
           <p>
             The text of this specification is dedicated to the public domain under{" "}
-            <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>.
+            <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noreferrer">
+              CC0 1.0
+            </a>
+            .
             Reference implementations are MIT unless a file says otherwise.
           </p>
         </Section>
@@ -351,7 +354,10 @@ function SpecPage() {
           <p className="text-ink-soft">
             The libraries live in the repo today. npm and PyPI names are reserved
             for v0.1.0; until that publish, copy from{" "}
-            <a href="https://github.com/reisierx/open-matter">GitHub</a>.
+            <a href="https://github.com/reisierx/open-matter" target="_blank" rel="noreferrer">
+              GitHub
+            </a>
+            .
           </p>
           <CopyBlock
             code={`// TypeScript — from the repo
@@ -424,7 +430,10 @@ from open_matter import read_manifest`}
           </h2>
           <p className="text-ink-soft">
             <strong>0.1</strong> — 13 August 2026. First public text.{" "}
-            <a href="https://github.com/reisierx/open-matter">Source</a>.
+            <a href="https://github.com/reisierx/open-matter" target="_blank" rel="noreferrer">
+              Source
+            </a>
+            .
           </p>
         </section>
 

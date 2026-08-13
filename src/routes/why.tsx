@@ -82,7 +82,7 @@ function WhyPage() {
             opens. So the consumers ship with the spec: a TypeScript reader, a
             Python reader, an MCP server that exposes read_manifest and
             write_manifest, and one free app that writes a card onto your file
-            and sits an exam written from the pages. Batch enrichment for
+            and sits an evaluation written from the pages. Batch enrichment for
             folders is next. The spec stays free.
           </p>
           <p>
@@ -91,7 +91,7 @@ function WhyPage() {
             an email for the batch list. If the card is wrong, ignore it.
           </p>
           <p>
-            <Link to="/app">Try it on a PDF</Link>
+            <Link to="/app">Try it on a .pdf</Link>
             {" · "}
             <Link to="/spec">Read the spec</Link>
           </p>

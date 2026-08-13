@@ -606,7 +606,7 @@ export function FrontmatterApp() {
         aria-label="Steps"
       >
         <li className={step === 1 ? "text-oxblood" : ""}>i · drop</li>
-        <li className={step === 2 ? "text-oxblood" : ""}>ii · exam</li>
+        <li className={step === 2 ? "text-oxblood" : ""}>ii · evaluate</li>
         <li className={step === 3 ? "text-oxblood" : ""}>iii · download</li>
       </ol>
 
@@ -632,11 +632,11 @@ export function FrontmatterApp() {
             />
           ) : null}
           {phase === "examining" ? (
-            <Status title="Writing the exam from the pages…" body="The card does not get to write the questions." />
+            <Status title="Writing the evaluation from the pages…" body="The card does not get to write the questions." />
           ) : null}
           {phase === "evaluating" ? (
             <Status
-              title="Sitting the exam…"
+              title="Evaluating…"
               body={exam.length ? `${exam.length} questions from the document` : "Checking cites against the pages"}
             />
           ) : null}
@@ -766,7 +766,7 @@ function Idle({
     <div>
       <h1 className="font-display text-4xl sm:text-5xl">Drop a PDF.</h1>
       <p className="mt-3 max-w-md text-ink-soft">
-        A frontier model writes a card. An exam written from the pages — not
+        A frontier model writes a card. An evaluation written from the pages — not
         from the card — has to pass. Then you download the same file with the
         card inside.
       </p>
@@ -866,7 +866,7 @@ function Review({
       <div className="shrink-0">
         <p className="text-xs tracking-[0.16em] text-muted uppercase">{filename}</p>
         <h1 className="mt-1 font-display text-3xl sm:text-4xl">
-          {evalResult ? (passed ? "The card passed." : "The card failed the exam.") : "Review the card."}
+          {evalResult ? (passed ? "The card passed." : "The card failed evaluation.") : "Review the card."}
         </h1>
         {stale ? (
           <p className="mt-2 text-sm text-warn">The text has changed since this card was written. Replace it.</p>
@@ -890,7 +890,7 @@ function Review({
           <p className="mt-1 text-sm text-ink-soft">
             First read: {firstRead.tokens.toLocaleString("en-GB")} tokens
             {firstRead.ms > 0 ? ` · ${(firstRead.ms / 1000).toFixed(1)}s` : ""}
-            {firstRead.pages ? ` · ${firstRead.pages} pages` : ""}. The exam is written from the pages, not the card.
+            {firstRead.pages ? ` · ${firstRead.pages} pages` : ""}. The evaluation is written from the pages, not the card.
           </p>
         ) : null}
       </div>
@@ -945,19 +945,7 @@ function Review({
             <button type="button" onClick={onRegenerate} className="h-11 border border-rule px-5 text-sm">
               Rebuild
             </button>
-          ) : (
-            <button
-              type="button"
-              onClick={onDownload}
-              disabled={!validation?.ok}
-              className="h-11 border border-rule px-5 text-sm disabled:opacity-50"
-            >
-              Download anyway
-            </button>
-          )}
-          <button type="button" onClick={onContinue} className="h-11 border border-rule px-5 text-sm">
-            Ask one yourself
-          </button>
+          ) : null}
           <button type="button" onClick={onBack} className="h-11 px-3 text-sm text-muted">
             Back
           </button>
@@ -970,7 +958,7 @@ function Review({
 function Scorecard({ result }: { result: EvalResult }) {
   return (
     <div className="border border-rule bg-folio p-4">
-      <p className="text-xs tracking-[0.16em] text-oxblood uppercase">Exam from the pages</p>
+      <p className="text-xs tracking-[0.16em] text-oxblood uppercase">Evaluation from the pages</p>
       <ul className="mt-2 space-y-1 text-sm">
         {result.structural.map((c) => (
           <li key={c.id} className={c.ok ? "text-ink-soft" : "text-warn"}>
@@ -1187,11 +1175,6 @@ function RaceOnFile({
             <button type="button" onClick={onAsk} className="h-11 border border-rule px-5 text-sm">
               Ask another
             </button>
-            {missed ? (
-              <button type="button" onClick={onDownload} className="h-11 px-3 text-sm text-muted">
-                Download anyway
-              </button>
-            ) : null}
           </div>
         </div>
       ) : null}
