@@ -24,17 +24,12 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const SNIPPET = `import { readManifest } from "open-matter";
-
-const card = await readManifest(bytes);
-if (card.manifest) console.log(card.manifest.title);`;
-
 function Home() {
   return (
     <SiteShell>
       <Folio className="pt-10 sm:pt-12">
-        <h1 className="max-w-3xl font-display text-4xl leading-[1.05] sm:text-5xl">
-          Stop making AI re-read the same <FileFlip />.
+        <h1 className="max-w-3xl text-balance font-display text-4xl leading-[1.1] sm:text-5xl">
+          Stop making AI re-read the same <FileFlip />
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-ink-soft">
           A small card travels inside the file: what it is, the facts that
@@ -62,10 +57,6 @@ function Home() {
 
       <Folio className="mt-8 sm:mt-10">
         <TheRace />
-      </Folio>
-
-      <Folio className="mt-10">
-        <SavingsCalculator />
       </Folio>
 
       <Folio className="mt-20">
@@ -166,29 +157,92 @@ function Home() {
 
       <Folio roman="ii" className="mt-20">
         <h2 className="font-display text-3xl sm:text-4xl">Who it’s for</h2>
+        <p className="mt-3 max-w-2xl text-ink-soft">
+          Three desks. Same card. The file leaves the building; the
+          understanding has to leave with it.
+        </p>
         <div className="mt-8 grid min-w-0 gap-4 lg:grid-cols-3">
           <Audience
-            kicker="You build AI tools"
-            title="Documents your small models can finally handle."
-            body="Five lines to read the card. If it is missing or stale, fall back. The libraries are MIT. The MCP server is in the repo."
-            href="/spec"
-            cta="Open the spec"
-            code={SNIPPET}
+            kicker="You write agents"
+            title="Stop handing your agent the haystack."
+            body="Claude, Codex, Cursor, Grok already load skills. Drop ours in. The agent opens the card, then one page — not twelve."
+            href="#install"
+            cta="Install the skill"
           />
           <Audience
-            kicker="You run an archive"
-            title="Understand each document once."
-            body="Legal, insurance, accounting, public sector. Pay the write once. Later reads are the card — and a graph of the whole folder is next."
+            kicker="You sit on a pile"
+            title="Pay the first read once."
+            body="Funds, chambers, insurers, public records. Every later desk, every later model, reads 1 KB. The file still looks the same in court."
             href="#waitlist"
             cta="Join the batch list"
           />
           <Audience
-            kicker="You have a file"
-            title="It has to pass before it downloads."
-            body="PDF is the beachhead. Drop one. The exam is written from the pages, not the card."
-            href="/app"
-            cta="Try it on a PDF"
+            kicker="You run small models"
+            title="A 3B can finish what the 70B was hired to start."
+            body="Frontier writes the digest. Your on-device stack answers from it. That is the only way an 8B survives past eight pages."
+            href="/why"
+            cta="Why this matters locally"
           />
+        </div>
+      </Folio>
+
+      <Folio className="mt-20">
+        <div id="install">
+        <p className="text-xs tracking-[0.18em] text-oxblood uppercase">Portable</p>
+        <h2 className="mt-2 font-display text-3xl sm:text-4xl">
+          A skill where agents already look. MCP if you want hands.
+        </h2>
+        <p className="mt-3 max-w-2xl text-ink-soft">
+          The website is the first runner. The unit you take home is a folder.
+        </p>
+        <p className="mt-5 flex flex-wrap gap-x-5 gap-y-2 font-display text-lg text-ink">
+          <span>Claude</span>
+          <span className="text-rule" aria-hidden>
+            ·
+          </span>
+          <span>Codex</span>
+          <span className="text-rule" aria-hidden>
+            ·
+          </span>
+          <span>Cursor</span>
+          <span className="text-rule" aria-hidden>
+            ·
+          </span>
+          <span>Grok</span>
+          <span className="text-rule" aria-hidden>
+            ·
+          </span>
+          <span>Copilot</span>
+        </p>
+        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+          <pre className="overflow-x-auto bg-ink p-4 text-[0.7rem] leading-relaxed text-paper">
+            {`# Skill (write + read, PDF profile)
+skills/open-matter-pdf-write
+skills/open-matter-pdf-read`}
+          </pre>
+          <pre className="overflow-x-auto bg-ink p-4 text-[0.7rem] leading-relaxed text-paper">
+            {`# Hands
+npx mcp-open-matter
+# read_manifest / write_manifest`}
+          </pre>
+        </div>
+        <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <a
+            href="https://github.com/reisierx/open-matter/tree/main/skills"
+            className="inline-flex h-12 items-center justify-center border border-oxblood bg-oxblood px-6 text-sm text-oxblood-ink no-underline hover:bg-oxblood-deep hover:text-oxblood-ink"
+          >
+            Get the skills
+          </a>
+          <a
+            href="https://github.com/reisierx/open-matter/tree/main/packages/mcp-open-matter"
+            className="inline-flex h-12 items-center justify-center border border-rule px-6 text-sm text-ink no-underline hover:border-ink"
+          >
+            MCP server
+          </a>
+          <Link to="/spec" hash="install" className="inline-flex h-12 items-center text-sm">
+            Libraries
+          </Link>
+        </div>
         </div>
       </Folio>
 
@@ -224,6 +278,10 @@ function Home() {
           </p>
           <WaitlistForm />
         </div>
+      </Folio>
+
+      <Folio className="mt-16">
+        <SavingsCalculator />
       </Folio>
     </SiteShell>
   );

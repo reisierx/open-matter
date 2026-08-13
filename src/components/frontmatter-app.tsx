@@ -709,7 +709,7 @@ export function FrontmatterApp() {
           ) : null}
 
           {phase === "done" ? (
-            <Done savedName={savedName} verdict={verdict} onAgain={reset} onVerify={() => inputRef.current?.click()} />
+            <Done savedName={savedName} verdict={verdict} onAgain={reset} />
           ) : null}
 
           {phase === "error" && pdfBytes ? (
@@ -1235,12 +1235,10 @@ function Done({
   savedName,
   verdict,
   onAgain,
-  onVerify,
 }: {
   savedName: string;
   verdict: ReturnType<typeof documentVerdict>;
   onAgain: () => void;
-  onVerify: () => void;
 }) {
   return (
     <div>
@@ -1258,12 +1256,9 @@ function Done({
       <div className="mt-6 flex flex-col gap-2 sm:flex-row">
         <button
           type="button"
-          onClick={onVerify}
+          onClick={onAgain}
           className="h-11 border border-oxblood bg-oxblood px-5 text-sm text-oxblood-ink"
         >
-          Verify it
-        </button>
-        <button type="button" onClick={onAgain} className="h-11 border border-rule px-5 text-sm">
           Do another one
         </button>
         <Link to="/spec" className="inline-flex h-11 items-center px-3 text-sm">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const FORMS = ["PDF", "DOCX", "EPUB", "HTML"] as const;
+const FORMS = [".pdf", ".docx", ".epub", ".html"] as const;
 
 /** Beachhead is PDF. The word flips so the sentence is about files, not one format. */
 export function FileFlip() {
@@ -21,24 +21,25 @@ export function FileFlip() {
     return () => window.clearInterval(id);
   }, [reduce]);
 
-  if (reduce) return <span>PDF</span>;
+  if (reduce) {
+    return <span className="font-mono text-[0.84em] text-oxblood">.pdf</span>;
+  }
 
   return (
-    <span className="relative inline-block h-[1.05em] w-[4.6ch] overflow-hidden align-baseline">
+    <span className="relative inline-grid h-[1.05em] w-[5.2ch] align-baseline font-mono text-[0.84em] text-oxblood">
       {FORMS.map((word, idx) => (
         <span
           key={word}
           aria-hidden={idx !== i}
-          className={`absolute inset-x-0 top-0 transition-[opacity,transform,filter] duration-300 ease-out ${
+          className={`col-start-1 row-start-1 transition-[opacity,transform,filter] duration-300 ease-out ${
             idx === i
               ? "translate-y-0 opacity-100 blur-none"
-              : "translate-y-3 opacity-0 blur-[4px]"
+              : "translate-y-[0.35em] opacity-0 blur-[4px]"
           }`}
         >
           {word}
         </span>
       ))}
-      <span className="invisible">{FORMS[0]}</span>
     </span>
   );
 }
