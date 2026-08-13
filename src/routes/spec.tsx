@@ -106,6 +106,7 @@ const FAQ = [
     q: "Can a folder of cards become a knowledge graph?",
     a: "That is the downstream product, not a 0.1 guarantee. GraphRAG-style systems spend most of their cost on entity extraction. Cards ship entities and sections already named. Cross-document resolution still needs validation, so we frame it as exploration.",
   },
+  {
     q: "Must every fact cite a page?",
     a: "Yes, if the fact contains a number, amount, date, or percentage. A cite-less number is a writer bug — omit it. The card is untrusted memory; a wrong $5,000 is worse than a map that says “fee: p.3”.",
   },
