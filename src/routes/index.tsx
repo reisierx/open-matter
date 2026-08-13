@@ -194,26 +194,22 @@ function Home() {
         </h2>
         <p className="mt-3 max-w-2xl text-ink-soft">
           The website is the first runner. The unit you take home is a folder.
+          These agents already load skills — that is the point of the format.
         </p>
-        <p className="mt-5 flex flex-wrap gap-x-5 gap-y-2 font-display text-lg text-ink">
-          <span>Claude</span>
-          <span className="text-rule" aria-hidden>
-            ·
-          </span>
-          <span>Codex</span>
-          <span className="text-rule" aria-hidden>
-            ·
-          </span>
-          <span>Cursor</span>
-          <span className="text-rule" aria-hidden>
-            ·
-          </span>
-          <span>Grok</span>
-          <span className="text-rule" aria-hidden>
-            ·
-          </span>
-          <span>Copilot</span>
-        </p>
+        <ul className="mt-6 flex flex-wrap items-end gap-x-8 gap-y-5">
+          {[
+            { name: "Claude", src: "/marks/claude.svg" },
+            { name: "ChatGPT", src: "/marks/openai.svg" },
+            { name: "Cursor", src: "/marks/cursor.svg" },
+            { name: "Grok", src: "/marks/grok.svg" },
+            { name: "Copilot", src: "/marks/copilot.svg" },
+          ].map((m) => (
+            <li key={m.name} className="flex items-center gap-2.5">
+              <img src={m.src} alt="" width={28} height={28} className="h-7 w-7" />
+              <span className="font-display text-lg leading-none">{m.name}</span>
+            </li>
+          ))}
+        </ul>
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
           <pre className="overflow-x-auto bg-ink p-4 text-[0.7rem] leading-relaxed text-paper">
             {`# Skill (write + read, PDF profile)
