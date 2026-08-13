@@ -1,7 +1,7 @@
 # pdf-frontmatter
 
-> A 1 KB YAML card inside a PDF so tools that look for it can skip the parse.
-> Written once. Answers travel with the file.
+> A 1 KB YAML card inside a PDF so agents and local models can skip the parse.
+> A frontier model writes it once. Every later reader benefits.
 
 pdf-frontmatter is a vendor-neutral convention (spec CC0, code MIT).
 The app at /app writes a card onto a single file. No account. Nothing stored.

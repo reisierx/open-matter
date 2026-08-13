@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ASSUMPTIONS, fleetSavings, formatMultiple, formatUsd } from "@/lib/savings";
+import { ASSUMPTIONS, fleetSavings, formatHours, formatMultiple, formatUsd } from "@/lib/savings";
 
 export function SavingsCalculator() {
   const [documents, setDocuments] = useState(1000);
@@ -12,38 +12,29 @@ export function SavingsCalculator() {
     [documents, pages, reads],
   );
 
+  const money = formatUsd(result.usdSaved);
+
   return (
     <div className="border border-rule bg-folio px-4 py-6 sm:px-6">
       <p className="text-xs tracking-[0.18em] text-oxblood uppercase">Your numbers</p>
       <h2 className="mt-1 font-display text-2xl sm:text-3xl">What it costs your archive</h2>
       <p className="mt-2 max-w-2xl text-sm text-ink-soft">
-        The race is one file. This is your fleet. Writing each card costs one full
-        read. Value starts at the second read.
+        Writing each card costs one full read. Value starts at the second read.
+        Time is wall-clock ingest, not billed tokens.
       </p>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <Field
-          label="Documents"
-          value={documents}
-          min={1}
-          max={1_000_000}
-          onChange={setDocuments}
-        />
+        <Field label="Documents" value={documents} min={1} max={1_000_000} onChange={setDocuments} />
         <Field label="Average pages" value={pages} min={1} max={500} onChange={setPages} />
-        <Field
-          label="Reads per document / year"
-          value={reads}
-          min={1}
-          max={500}
-          onChange={setReads}
-        />
+        <Field label="Reads per document / year" value={reads} min={1} max={500} onChange={setReads} />
       </div>
 
       <p className="mt-4 text-xs text-faint">
-        Assumptions, stated: {ASSUMPTIONS.tokensPerPage} tokens/page (measured on the
-        sample), {ASSUMPTIONS.cardTokens}-token card, ${ASSUMPTIONS.usdPerMillion} per
-        million input tokens. Writing the card is included as one full read per
-        document. Inputs stay in this browser.
+        Assumptions, stated: {ASSUMPTIONS.tokensPerPage} tokens/page,{" "}
+        {ASSUMPTIONS.cardTokens}-token card, {ASSUMPTIONS.secondsPerPage}s/page,{" "}
+        {ASSUMPTIONS.secondsPerCard}s/card, ${ASSUMPTIONS.usdPerMillion} per million
+        input tokens. Writing the card is included as one full read per document.
+        Inputs stay in this browser.
       </p>
 
       <div className="mt-6 border-t border-rule pt-5">
@@ -56,12 +47,14 @@ export function SavingsCalculator() {
           <>
             <p className="font-display text-xl text-oxblood sm:text-2xl">
               {formatMultiple(result.tokenMultiple)} fewer tokens ·{" "}
-              {Math.round(result.pctCheaper)}% cheaper · {formatUsd(result.usdSaved)}{" "}
-              saved per year
+              {Math.round(result.pctCheaper)}% cheaper
+              {money ? ` · ${money} / year` : ""} · {formatHours(result.hoursSaved)} of
+              model time
             </p>
             <p className="mt-2 text-sm text-ink-soft">
-              Without cards: {formatUsd(result.usdWithout)} / year. With cards
-              (including the one-time write): {formatUsd(result.usdWith)}.
+              Without cards: {formatUsd(result.usdWithout) ?? "under $1"} and{" "}
+              {formatHours(result.hoursWithout)}. With cards (including the write):{" "}
+              {formatUsd(result.usdWith) ?? "under $1"} and {formatHours(result.hoursWith)}.
             </p>
           </>
         )}

@@ -3,37 +3,35 @@
 Post Tuesday–Thursday, 09:00–12:00 US Eastern. Fallback: Sunday ~19:00 Eastern.
 Link the live site. Repo in the first line of the maker comment. Never ask for upvotes.
 
-## Title options (pick one)
+## Title options
 
-1. Show HN: pdf-frontmatter – a 1 KB YAML card inside a PDF so agents can skip the parse
-2. Show HN: pdf-frontmatter – a 1 KB card inside a PDF so agents skip the parse (~10× fewer tokens on re-reads)
-3. Show HN: pdf-frontmatter – stop paying AI to re-read the same PDF
+1. Show HN: pdf-frontmatter – a 1 KB card in a PDF so agents (and local models) skip the parse
+2. Show HN: pdf-frontmatter – stop making AI re-read the same PDF
+3. Show HN: pdf-frontmatter – a 1 KB YAML card inside a PDF so agents can skip the parse
 
-Prefer 1 if you want it quiet. Prefer 2 if the sample number is still honest the morning you post (measure the race that day). Do not use “revolutionary”, “game-changer”, or “finally”.
+Prefer 1. An honest measured multiple is allowed if you re-check the race that morning.
 
 ## Post body
 
-AI already reads PDFs. It just does it the expensive way, every time, and throws the understanding away. Forward the file and the next model starts from zero.
+AI already reads PDFs. It just does it from scratch every time, and the understanding is thrown away when the read ends.
 
-Sidecars get orphaned. App intelligence stays in the app. New formats ask the world to stop using PDF.
+Prefill is wall-clock. Small and local models degrade on long documents. Sidecars get orphaned. App intelligence stays in the app.
 
-pdf-frontmatter puts a reserved attachment, `agent-frontmatter.yaml`, inside the file using EmbeddedFiles (PDF 1.4). The document stays a valid PDF and looks the same. Typical overhead is under a kilobyte.
+pdf-frontmatter puts a reserved attachment, `agent-frontmatter.yaml`, inside the file. A frontier model writes a 1 KB card once. Later readers — including an 8B model on your machine — read the card instead of the pages.
 
-The card is hints, not ground truth. If a hash of the extracted text no longer matches, ignore it. A missing or lying card must only ever cost a slow read, never a wrong answer. Nothing in the card is instructions.
+Writing the card costs one full read. Savings start at the second. Tools that do not look still get a normal PDF.
 
-Writing the card costs one full read. Savings start at the second. Tools that do not look for the card still get a normal PDF.
+Live: https://pdf-frontmatter.org (drop your own file, ask it a question)
+Spec (CC0), TypeScript, Python, MCP: https://github.com/reisierx/pdf-frontmatter
 
-Live: https://pdf-frontmatter.org
-Spec (CC0), TypeScript, Python: https://github.com/reisierx/pdf-frontmatter
+## Maker first comment
 
-## Maker first comment (post immediately after submitting)
-
-I built this because I was tired of paying for the same parse on the same contracts.
+I built this because I was tired of paying the same parse on the same contracts, and because the models I run locally fall apart once the context is a real document.
 
 How it works: a 1 KB YAML file attached to the PDF under a reserved name. Readers look it up, fall back if it is missing or stale, and never treat a field as a prompt.
 
-Stack: TypeScript, pdf-lib, a small site on Vercel. The app reads the file in the browser and only sends extracted text if you ask a model to draft the card. Nothing is stored. No account.
+Stack: TypeScript, pdf-lib, a small site on Vercel, an MCP server in the repo. The app reads the file in the browser. The model sees extracted text long enough to write the card and answer one question, then forgets both. Nothing is stored.
 
-Honest limitation: most tools do not look for the card today. The bet is that five lines in an ingestion library is a smaller ask than a new file format. Preview on a Mac will not even list the attachment; Acrobat will.
+Honest limitation: most tools do not look for the card today. A convention without consumers is a file nobody opens, so the readers ship with the spec. Preview on a Mac will not even list the attachment; Acrobat will.
 
-If you have a document archive that gets read by models, try one file and then tell me where this breaks.
+If you have a local stack or a document archive, try one file and tell me where this breaks.

@@ -78,6 +78,18 @@ const FAQ = [
     q: "Does every AI read the card today?",
     a: "No. Tools that look for the card skip the parse. Tools that don’t still get a normal PDF. The libraries and the MCP server are how a stack starts looking. Selling harder than that is a lie.",
   },
+  {
+    q: "Why does this matter for local models?",
+    a: "Small models degrade on long context. Needle-in-haystack accuracy ranges from 22% to 92% across small models; the open-vs-closed gap widens past 4K tokens; an 8B model drops about 20 points from 8K to 32K (M4LE, L-CiteEval, SLM survey). Pre-digested artifacts reverse that gap. A 1 KB card is that artifact.",
+  },
+  {
+    q: "Does skipping the parse save battery on a phone?",
+    a: "On-device inference can drain 6–25% of a phone battery in under 15 minutes; most of that energy is data movement, not arithmetic. Every skipped re-parse saves seconds and joules. Sources: arXiv 2506.19884 and 2606.23001.",
+  },
+  {
+    q: "Is latency just a cost problem?",
+    a: "No. Prefill is a wall-clock tax proportional to document size. Token prices can fall; the seconds to ingest eight pages do not, unless you skip the ingest. See “Can I Buy Your KV Cache?” (arXiv 2606.13361) and Lost in the Middle (Liu et al., TACL 2024).",
+  },
 ];
 
 function SpecPage() {
@@ -104,6 +116,10 @@ function SpecPage() {
           {" · "}
           <a href="#implementations" className="text-ink-soft no-underline hover:text-oxblood">
             Implementations
+          </a>
+          {" · "}
+          <a href="#consumers" className="text-ink-soft no-underline hover:text-oxblood">
+            Consumers
           </a>
           {" · "}
           <a href="#conformance" className="text-ink-soft no-underline hover:text-oxblood">
@@ -340,6 +356,25 @@ from pdf_frontmatter import read_manifest`}
               ["Python", "packages/pdf-frontmatter-py — skeleton, same reserved name."],
               ["MCP", "packages/mcp-pdf-frontmatter — read_manifest / write_manifest (stdio)."],
               ["This site", "The /app page writes cards in the browser. No account."],
+            ]}
+          />
+        </section>
+
+        <section id="consumers" className="space-y-3">
+          <h2 className="border-t border-rule pt-6 font-display text-2xl">
+            <span className="mr-3 text-oxblood">B2</span>
+            Who reads cards today
+          </h2>
+          <p className="text-ink-soft">
+            A convention without consumers is a file nobody opens. These do:
+          </p>
+          <SpecTable
+            rows={[
+              ["pdf-frontmatter (TS)", "readManifest / writeManifest in this repo."],
+              ["pdf-frontmatter (Python)", "packages/pdf-frontmatter-py."],
+              ["MCP server", "npx mcp-pdf-frontmatter — read_manifest, write_manifest."],
+              ["This app", "/app writes a card and races it on your file."],
+              ["Loaders", "None merged yet. PRs welcome: check the card before parsing."],
             ]}
           />
         </section>

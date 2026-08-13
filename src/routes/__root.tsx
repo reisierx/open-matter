@@ -16,7 +16,7 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "A 1 KB card inside the PDF. Written once. Tools that look for it skip the parse.",
+          "A 1 KB card inside the PDF. A frontier model writes it once; every agent and every local model reads it in milliseconds.",
       },
       { name: "apple-mobile-web-app-title", content: APP_NAME },
       { name: "theme-color", content: "#f3ede3" },
@@ -25,7 +25,7 @@ export const Route = createRootRoute({
       { property: "og:title", content: "pdf-frontmatter" },
       {
         property: "og:description",
-        content: "Stop paying AI to re-read the same PDF.",
+        content: "Stop making AI re-read the same PDF.",
       },
       ...(ogImage
         ? [

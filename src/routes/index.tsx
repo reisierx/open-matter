@@ -8,16 +8,16 @@ export const Route = createFileRoute("/")({
   component: Home,
   head: () => ({
     meta: [
-      { title: "pdf-frontmatter — stop paying AI to re-read the same PDF" },
+      { title: "pdf-frontmatter — stop making AI re-read the same PDF" },
       {
         name: "description",
         content:
-          "A 1 KB card inside the PDF carries what the document is and where things live. Written once. Tools that look for the card skip the parse.",
+          "A 1 KB card inside the file. A frontier model writes it once; every agent, and every small local model, reads it in milliseconds.",
       },
-      { property: "og:title", content: "Stop paying AI to re-read the same PDF." },
+      { property: "og:title", content: "Stop making AI re-read the same PDF." },
       {
         property: "og:description",
-        content: "Read once. Answer everywhere the file goes.",
+        content: "Read it once. Every model benefits forever.",
       },
     ],
   }),
@@ -33,12 +33,12 @@ function Home() {
     <SiteShell>
       <Folio className="pt-10 sm:pt-12">
         <h1 className="max-w-3xl font-display text-4xl leading-[1.05] sm:text-5xl">
-          Stop paying AI to re-read the same PDF.
+          Stop making AI re-read the same PDF.
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-ink-soft">
           A 1 KB card inside the file carries what the document is and where
-          things live. Written once; tools that look for the card skip the parse
-          and answer in milliseconds.
+          things live. A frontier model writes it once; every agent, and every
+          small local model, reads it in milliseconds.
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
           <Link
@@ -54,7 +54,9 @@ function Home() {
             Read the spec
           </Link>
         </div>
-        <p className="mt-3 text-sm text-muted">Free · no account · nothing stored</p>
+        <p className="mt-3 text-sm text-muted">
+          Free · no account · nothing stored · open standard, spec CC0
+        </p>
       </Folio>
 
       <Folio className="mt-8 sm:mt-10">
@@ -65,38 +67,73 @@ function Home() {
         <SavingsCalculator />
       </Folio>
 
-      <Folio roman="i" className="mt-20">
-        <h2 className="font-display text-3xl sm:text-4xl">How it works</h2>
-        <ol className="mt-8 grid gap-8 sm:grid-cols-3">
-          {[
-            {
-              n: "i",
-              t: "We read your PDF once.",
-              d: "In your browser. The file does not leave your machine until you ask a model to draft the card — and then only the extracted text is sent.",
-            },
-            {
-              n: "ii",
-              t: "We write a one-page card.",
-              d: "What it is, what’s where, who is named. About 40 words and a map of sections to page numbers.",
-            },
-            {
-              n: "iii",
-              t: "We put the card inside the file.",
-              d: "Invisible, standard, under 1 KB. A normal PDF attachment. Acrobat has shown these since 2001.",
-            },
-          ].map((step) => (
-            <li key={step.n} className="border-t border-rule pt-4">
-              <p className="text-xs tracking-[0.18em] text-oxblood uppercase">{step.n}</p>
-              <h3 className="mt-2 font-display text-xl">{step.t}</h3>
-              <p className="mt-2 text-sm text-ink-soft">{step.d}</p>
-            </li>
-          ))}
-        </ol>
-        <p className="mt-8 max-w-2xl text-sm text-muted">
-          Preview on a Mac will not list the attachment. Acrobat will. So will
-          any tool that looks for <code className="font-mono text-xs">agent-frontmatter.yaml</code>.
-          Tools that don’t look still get a normal PDF.
+      <Folio className="mt-20">
+        <p className="text-xs tracking-[0.18em] text-oxblood uppercase">Works with local models</p>
+        <h2 className="mt-2 font-display text-3xl sm:text-4xl">
+          Write the card once with a frontier model. Your on-device models read it forever.
+        </h2>
+        <ul className="mt-6 grid gap-6 sm:grid-cols-3">
+          <li className="border-t border-rule pt-4">
+            <h3 className="font-display text-xl">Small models fail on long documents</h3>
+            <p className="mt-2 text-sm text-ink-soft">
+              Needle-in-haystack accuracy on small models ranges from 22% to 92%.
+              The gap vs closed models widens past 4K tokens. An 8B model drops
+              about 20 points from 8K to 32K context.
+            </p>
+          </li>
+          <li className="border-t border-rule pt-4">
+            <h3 className="font-display text-xl">A card written once fixes that</h3>
+            <p className="mt-2 text-sm text-ink-soft">
+              Pre-digested artifacts reverse the gap. A 1 KB card is the section
+              map and the entities — the thing a 3B model can actually hold.
+            </p>
+          </li>
+          <li className="border-t border-rule pt-4">
+            <h3 className="font-display text-xl">On a phone, it also saves battery</h3>
+            <p className="mt-2 text-sm text-ink-soft">
+              Local inference can drain 6–25% of a phone battery in under 15
+              minutes. Most of that energy is data movement. Every skipped
+              re-parse saves seconds and joules.
+            </p>
+          </li>
+        </ul>
+        <p className="mt-5 text-sm text-muted">
+          Sources, cited on the{" "}
+          <Link to="/spec" hash="faq">
+            spec FAQ
+          </Link>
+          . Consume a card from any local stack:
         </p>
+        <pre className="mt-3 max-w-full overflow-x-auto bg-ink p-3 text-[0.7rem] leading-relaxed text-paper">
+          {`npx mcp-pdf-frontmatter   # read_manifest / write_manifest`}
+        </pre>
+      </Folio>
+
+      <Folio roman="i" className="mt-20">
+        <h2 className="font-display text-3xl sm:text-4xl">What the card enables</h2>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          <Enable
+            title="Capability transfer"
+            body="Write the card once with a frontier model; your on-device and open-weight models read it forever."
+          />
+          <Enable
+            title="Precise retrieval"
+            body="Filter to the right document and the right page before spending a token guessing."
+          />
+          <Enable
+            title="Progressive disclosure"
+            body="Agents read a 1 KB card to decide what to open — the same pattern Claude Skills use."
+          />
+          <Enable
+            title="Staleness hash"
+            body="A content hash tells any agent instantly whether its cached understanding is still valid."
+          />
+          <Enable
+            title="Point it at a folder, get a graph"
+            body="Documents as nodes, shared entities as edges. Coming. Exploration, not guaranteed truth."
+            coming
+          />
+        </div>
       </Folio>
 
       <Folio roman="ii" className="mt-20">
@@ -104,8 +141,8 @@ function Home() {
         <div className="mt-8 grid min-w-0 gap-4 lg:grid-cols-3">
           <Audience
             kicker="You build AI tools"
-            title="Stop paying the full parse on every touch."
-            body="Five lines to read the card. If it is missing or stale, fall back. The libraries are MIT."
+            title="Documents your small models can finally handle."
+            body="Five lines to read the card. If it is missing or stale, fall back. The libraries are MIT. The MCP server is in the repo."
             href="/spec"
             cta="Open the spec"
             code={SNIPPET}
@@ -113,14 +150,14 @@ function Home() {
           <Audience
             kicker="You run an archive"
             title="Understand each document once."
-            body="Legal, insurance, accounting, public sector. Thousands of PDFs feeding models. Pay the write once; every later read is the card."
+            body="Legal, insurance, accounting, public sector. Pay the write once. Later reads are the card — and a graph of the whole folder is next."
             href="#waitlist"
             cta="Join the batch list"
           />
           <Audience
             kicker="You have PDFs"
-            title="Try it on one file. Free."
-            body="You get the same PDF back with a 1 KB card inside. Useful as a human summary today. Ready for any tool that learns to look."
+            title="Race it on your own file."
+            body="Drop one PDF. Ask it a question. See the card side finish first. Free."
             href="/app"
             cta="Try it on a PDF"
           />
@@ -132,7 +169,7 @@ function Home() {
           <p className="text-xs tracking-[0.18em] text-muted uppercase">Open</p>
           <h2 className="mt-2 font-display text-3xl">A convention, CC0. Code, MIT.</h2>
           <p className="mt-3 max-w-2xl text-sm text-ink-soft">
-            TypeScript and Python libraries in the repo. Complementary to{" "}
+            TypeScript, Python, and an MCP server in the repo. Complementary to{" "}
             <a href="https://doclang.ai" rel="noreferrer">
               DocLang
             </a>
@@ -161,6 +198,18 @@ function Home() {
         </div>
       </Folio>
     </SiteShell>
+  );
+}
+
+function Enable({ title, body, coming }: { title: string; body: string; coming?: boolean }) {
+  return (
+    <div className="border border-rule bg-folio p-5">
+      {coming ? (
+        <p className="text-xs tracking-[0.16em] text-muted uppercase">Coming</p>
+      ) : null}
+      <h3 className="font-display text-xl">{title}</h3>
+      <p className="mt-2 text-sm text-ink-soft">{body}</p>
+    </div>
   );
 }
 
@@ -193,17 +242,7 @@ function Audience({
     </>
   );
 
-  if (href.startsWith("#")) {
-    return (
-      <a
-        href={href}
-        className="flex min-w-0 flex-col border border-rule bg-folio p-5 text-ink no-underline hover:border-ink"
-      >
-        {inner}
-      </a>
-    );
-  }
-  if (href.startsWith("http")) {
+  if (href.startsWith("#") || href.startsWith("http")) {
     return (
       <a
         href={href}

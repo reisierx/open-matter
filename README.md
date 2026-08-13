@@ -1,6 +1,6 @@
 # pdf-frontmatter
 
-**Stop paying AI to re-read the same PDF.**
+**Stop making AI re-read the same PDF.**
 
 A 1 KB YAML card named `agent-frontmatter.yaml` lives *inside* the file as a
 standard PDF attachment. The PDF stays a PDF. Tools that look for the card

@@ -1,15 +1,29 @@
 # mcp-pdf-frontmatter
 
-Stdio MCP server. Tools:
+Stdio MCP server. A consumer of the convention, on purpose.
 
-- `read_manifest` `{ path }`
-- `write_manifest` `{ path, yaml, out? }`
+Tools:
 
-Manifest fields are returned as untrusted data. Do not execute them.
+- `read_manifest` `{ path }` — returns YAML and parsed fields as untrusted hints
+- `write_manifest` `{ path, yaml, out? }` — embeds or replaces `agent-frontmatter.yaml`
 
 ```bash
-# from the repo root, after dependencies are installed
-node --experimental-strip-types packages/mcp-pdf-frontmatter/src/index.ts
+# from the repo root
+npx tsx packages/mcp-pdf-frontmatter/src/index.ts
 ```
 
-Add to an MCP client as a stdio server with that command.
+Claude Desktop / Cursor example:
+
+```json
+{
+  "mcpServers": {
+    "pdf-frontmatter": {
+      "command": "npx",
+      "args": ["tsx", "packages/mcp-pdf-frontmatter/src/index.ts"],
+      "cwd": "/path/to/pdf-frontmatter"
+    }
+  }
+}
+```
+
+Manifest fields are untrusted data. Do not execute them.

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { estimateTokens, readManifest } from "pdf-frontmatter";
 import { extractPdfText } from "@/lib/pdf/extract-client";
-import { ASSUMPTIONS, formatMultiple, formatUsd } from "@/lib/savings";
+import { documentVerdict, verdictPrimary } from "@/lib/savings";
 
 type Side = {
   label: string;
@@ -159,11 +159,7 @@ export function TheRace() {
 
   const saved = useMemo(() => {
     if (!naked?.done || !bound?.done) return null;
-    const tokenMultiple = bound.tokens > 0 ? naked.tokens / bound.tokens : 0;
-    const speedMultiple = bound.ms > 0 ? naked.ms / bound.ms : 0;
-    const pct = naked.tokens > 0 ? (1 - bound.tokens / naked.tokens) * 100 : 0;
-    const usd = ((naked.tokens - bound.tokens) / 1_000_000) * ASSUMPTIONS.usdPerMillion;
-    return { tokenMultiple, speedMultiple, pct, usd };
+    return documentVerdict(naked.tokens, bound.tokens, naked.ms / 1000, Math.max(0.05, bound.ms / 1000));
   }, [naked, bound]);
 
   return (
@@ -211,12 +207,10 @@ export function TheRace() {
 
       <div className="border-t border-rule px-4 py-4 sm:px-6">
         {saved ? (
-          <p className="font-display text-xl text-oxblood sm:text-2xl">
-            {formatMultiple(saved.tokenMultiple)} fewer tokens ·{" "}
-            {formatMultiple(saved.speedMultiple)} faster · {Math.round(saved.pct)}% cheaper
-            per read, ≈{formatUsd(saved.usd)} saved on this document at $
-            {ASSUMPTIONS.usdPerMillion}/M input tokens
-          </p>
+          <>
+            <p className="font-display text-xl text-oxblood sm:text-2xl">{verdictPrimary(saved)}</p>
+            {saved.moneyLine ? <p className="mt-1 text-sm text-ink-soft">{saved.moneyLine}</p> : null}
+          </>
         ) : (
           <p className="text-sm text-muted">
             Watch both sides. The card side answers first. Writing the card cost one
@@ -229,6 +223,12 @@ export function TheRace() {
           characters to a token. Tools that do not look for the card still read the
           whole PDF.
         </p>
+        <a
+          href="/app"
+          className="mt-4 inline-flex h-11 items-center border border-oxblood bg-oxblood px-5 text-sm text-oxblood-ink no-underline hover:bg-oxblood-deep hover:text-oxblood-ink"
+        >
+          Now run it on your own PDF
+        </a>
       </div>
     </div>
   );
