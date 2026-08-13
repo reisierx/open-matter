@@ -14,19 +14,14 @@ Bought **`pdf-frontmatter.org`** on 13 August 2026. One name. Prefácio lives at
 
 Registration was still “in progress” at purchase. Wait until the registrar shows the domain as active before changing DNS.
 
-## 3. Put the site on the internet
+## 3. Put the site on the internet — done
 
-Deployed 13 August 2026 to Vercel (Hobby), project `pdf-frontmatter`, from `reisierx/pdf-frontmatter`. The `*.vercel.app` URL already serves the site.
+Live at [https://pdf-frontmatter.org](https://pdf-frontmatter.org) as of 13 August 2026.
 
-Still to do — attach the name:
+Vercel Hobby, project `pdf-frontmatter`, from `reisierx/pdf-frontmatter`. Apex A record at GoDaddy. Prefácio is `https://pdf-frontmatter.org/app`.
 
-1. In Vercel → the `pdf-frontmatter` project → **Settings** → **Domains**
-2. Add `pdf-frontmatter.org`. Accept `www` if Vercel offers it.
-3. Copy the records Vercel shows. Do not invent them.
-4. At the registrar (where you bought the domain), paste those records. Remove any parking/A records the registrar added.
-5. Wait. Apex domains often take minutes, sometimes a few hours.
+Do not turn on a paid Vercel plan until the site is slow.
 
-Spending: Vercel’s free tier is enough. Do not turn on a paid plan until the site is slow.
 
 
 
