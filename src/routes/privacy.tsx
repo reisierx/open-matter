@@ -4,7 +4,7 @@ import { Folio, SiteShell } from "@/components/site-shell";
 export const Route = createFileRoute("/privacy")({
   component: PrivacyPage,
   head: () => ({
-    meta: [{ title: "Privacy — pdf-frontmatter / Prefácio" }],
+    meta: [{ title: "Privacy — pdf-frontmatter" }],
   }),
 });
 
@@ -15,12 +15,12 @@ function PrivacyPage() {
         <h1 className="font-display text-4xl">What we see. What we do not.</h1>
         <div className="mt-8 max-w-2xl space-y-4 text-ink-soft">
           <p>
-            Prefácio does not create an account. It does not keep the PDF. It
+            The app does not create an account. It does not keep the PDF. It
             does not keep the extracted text. It does not keep the card after
             you download.
           </p>
           <p>
-            The file is opened in your browser. If you ask the desk to write a
+            The file is opened in your browser. If you ask a model to write a
             card, the extracted text — not the file — is sent to a language
             model on the server and discarded with the request. The API key
             stays on the server.

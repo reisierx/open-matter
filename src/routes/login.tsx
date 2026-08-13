@@ -13,7 +13,7 @@ function Login() {
       <main className="mx-auto max-w-sm px-4 py-20">
         <h1 className="font-display text-3xl">Sign in</h1>
         <p className="mt-3 text-sm text-muted">
-          Prefácio does not need an account. Sign-in is only here if you want a
+          The app does not need an account. Sign-in is only here if you want a
           session on this site.
         </p>
         <div className="mt-6 space-y-3">
@@ -33,7 +33,7 @@ function Login() {
           )}
         </div>
         <p className="mt-6 text-sm">
-          <Link to="/">Back to the press</Link>
+          <Link to="/">Back</Link>
         </p>
       </main>
     </SiteShell>

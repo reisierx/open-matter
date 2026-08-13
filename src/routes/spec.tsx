@@ -37,18 +37,86 @@ generated_by: <model or tool id>
 generated_at: 2026-08-13
 `;
 
+const FAQ = [
+  {
+    q: "Why not XMP or the Info dictionary?",
+    a: "Both are flat, ancient, and aimed at bibliographic software. Nobody targeting agents looks there first, and the shape cannot carry key_sections or derived cleanly. An attachment has a name, a MIME type, and room to grow.",
+  },
+  {
+    q: "Why not Tagged PDF?",
+    a: "Tagged PDF is an accessibility structure. It is barely produced in practice, expensive to retrofit, and still a full parse. The card is a hint so a tool can decide whether that parse is worth it.",
+  },
+  {
+    q: "Why not just DocLang?",
+    a: "DocLang is the representation: what the machine-readable version of a document looks like. pdf-frontmatter is the carrier: where that representation, or a pointer to it, lives so it cannot be orphaned. Complementary, not competing. The derived key is the bridge.",
+  },
+  {
+    q: "What stops a card from lying?",
+    a: "Nothing. That is why the hash and the fallback rule exist. If content_sha256 does not match the current extracted text, ignore the card or regenerate it. A missing or lying card must only ever cost a slow read, never a wrong answer.",
+  },
+  {
+    q: "Does the PDF look different?",
+    a: "No. Pages are not touched. Viewers that list attachments — Acrobat, many others — show agent-frontmatter.yaml as a normal file. macOS Preview does not list attachments. Typical overhead is under a kilobyte.",
+  },
+  {
+    q: "Is this an Adobe product?",
+    a: "No. The convention is called pdf-frontmatter. The spec is CC0. The code is MIT. The app on this site is the standard’s front door, not a second brand.",
+  },
+  {
+    q: "What does the app send to a model?",
+    a: "Extracted text only, truncated, over HTTPS, from the server. The PDF bytes never leave the browser. Nothing is stored. There is no account.",
+  },
+  {
+    q: "Can a card tell an agent what to do?",
+    a: "No. Manifests are untrusted data. Agents must not interpret any field as instructions, code, a prompt, or a URL to fetch. Implementations must not render the card as executable anything.",
+  },
+  {
+    q: "What about scanned PDFs?",
+    a: "Set extraction.scanned to true. The card can still name the title, the parties, and the pages worth OCRing. The agent then knows to spend the expensive pass.",
+  },
+  {
+    q: "Does every AI read the card today?",
+    a: "No. Tools that look for the card skip the parse. Tools that don’t still get a normal PDF. The libraries and the MCP server are how a stack starts looking. Selling harder than that is a lie.",
+  },
+];
+
 function SpecPage() {
   const [copied, setCopied] = useState(false);
 
   return (
     <SiteShell>
       <Folio roman="spec" className="pt-12 sm:pt-16">
-        <p className="text-sm text-muted">Published 13 August 2026 · CC0 1.0</p>
+        <p className="text-sm text-muted">
+          <span className="border border-rule px-2 py-0.5 font-mono text-xs">0.1</span>
+          {" · "}
+          Published 13 August 2026 · CC0 1.0
+        </p>
         <h1 className="mt-2 font-display text-4xl sm:text-5xl">pdf-frontmatter / 0.1</h1>
         <p className="mt-4 max-w-2xl text-ink-soft">
           Normative text. Implementations that want to interoperate must follow
           the sentences that say <em>must</em>. A copyable file lives at{" "}
           <a href="/spec/pdf-frontmatter-0.1.md">/spec/pdf-frontmatter-0.1.md</a>.
+        </p>
+        <p className="mt-4 text-sm text-muted">
+          <a href="#install" className="text-ink-soft no-underline hover:text-oxblood">
+            Install
+          </a>
+          {" · "}
+          <a href="#implementations" className="text-ink-soft no-underline hover:text-oxblood">
+            Implementations
+          </a>
+          {" · "}
+          <a href="#conformance" className="text-ink-soft no-underline hover:text-oxblood">
+            Conformance
+          </a>
+          {" · "}
+          <a href="#changelog" className="text-ink-soft no-underline hover:text-oxblood">
+            Changelog
+          </a>
+          {" · "}
+          <a href="#faq" className="text-ink-soft no-underline hover:text-oxblood">
+            FAQ
+          </a>
         </p>
       </Folio>
 
@@ -235,8 +303,107 @@ function SpecPage() {
             Reference implementations are MIT unless a file says otherwise.
           </p>
         </Section>
+
+        <section id="install" className="space-y-3">
+          <h2 className="border-t border-rule pt-6 font-display text-2xl">
+            <span className="mr-3 text-oxblood">A</span>
+            Install
+          </h2>
+          <p className="text-ink-soft">
+            The libraries live in the repo today. npm and PyPI names are reserved
+            for v0.1.0; until that publish, copy from{" "}
+            <a href="https://github.com/reisierx/pdf-frontmatter">GitHub</a>.
+          </p>
+          <CopyBlock
+            code={`// TypeScript — from the repo
+import { readManifest } from "pdf-frontmatter";
+
+const card = await readManifest(bytes);
+if (card.manifest) {
+  // hints only. fall back if missing, invalid, or stale.
+}`}
+          />
+          <CopyBlock
+            code={`# Python — from packages/pdf-frontmatter-py
+from pdf_frontmatter import read_manifest`}
+          />
+        </section>
+
+        <section id="implementations" className="space-y-3">
+          <h2 className="border-t border-rule pt-6 font-display text-2xl">
+            <span className="mr-3 text-oxblood">B</span>
+            Implementations
+          </h2>
+          <SpecTable
+            rows={[
+              ["TypeScript", "packages/pdf-frontmatter — read, write, hash, CLI."],
+              ["Python", "packages/pdf-frontmatter-py — skeleton, same reserved name."],
+              ["MCP", "packages/mcp-pdf-frontmatter — read_manifest / write_manifest (stdio)."],
+              ["This site", "The /app page writes cards in the browser. No account."],
+            ]}
+          />
+        </section>
+
+        <section id="conformance" className="space-y-3">
+          <h2 className="border-t border-rule pt-6 font-display text-2xl">
+            <span className="mr-3 text-oxblood">C</span>
+            Conformance
+          </h2>
+          <p className="text-ink-soft">Self-certify. An implementation conforms to 0.1 if:</p>
+          <ol className="list-decimal space-y-2 pl-5 text-ink-soft">
+            <li>The reserved filename is exactly <code>agent-frontmatter.yaml</code>.</li>
+            <li>The MIME type is <code>application/yaml</code>.</li>
+            <li>On any read failure, it falls back silently to a normal parse.</li>
+            <li>Tools that rewrite a card preserve unknown keys.</li>
+            <li>A rewrite replaces the existing card. Never two reserved names.</li>
+          </ol>
+        </section>
+
+        <section id="changelog" className="space-y-3">
+          <h2 className="border-t border-rule pt-6 font-display text-2xl">
+            <span className="mr-3 text-oxblood">D</span>
+            Changelog
+          </h2>
+          <p className="text-ink-soft">
+            <strong>0.1</strong> — 13 August 2026. First public text.{" "}
+            <a href="https://github.com/reisierx/pdf-frontmatter">Source</a>.
+          </p>
+        </section>
+
+        <section id="faq" className="space-y-6">
+          <h2 className="border-t border-rule pt-6 font-display text-2xl">
+            <span className="mr-3 text-oxblood">E</span>
+            FAQ
+          </h2>
+          {FAQ.map((item) => (
+            <div key={item.q}>
+              <h3 className="font-display text-xl">{item.q}</h3>
+              <p className="mt-2 text-ink-soft">{item.a}</p>
+            </div>
+          ))}
+        </section>
       </article>
     </SiteShell>
+  );
+}
+
+function CopyBlock({ code }: { code: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        className="absolute top-2 right-2 border border-rule-strong bg-folio px-2 py-1 text-xs text-ink"
+        onClick={async () => {
+          await navigator.clipboard.writeText(code);
+          setCopied(true);
+          window.setTimeout(() => setCopied(false), 1500);
+        }}
+      >
+        {copied ? "Copied" : "Copy"}
+      </button>
+      <pre className="overflow-x-auto bg-ink p-4 text-xs leading-relaxed text-paper">{code}</pre>
+    </div>
   );
 }
 

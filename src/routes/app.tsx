@@ -1,15 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteShell } from "@/components/site-shell";
-import { PrefacioApp } from "@/components/prefacio-app";
+import { FrontmatterApp } from "@/components/frontmatter-app";
 
 export const Route = createFileRoute("/app")({
   component: AppPage,
   head: () => ({
     meta: [
-      { title: "Prefácio — bind a card to a PDF" },
+      { title: "Try it on a PDF — pdf-frontmatter" },
       {
         name: "description",
-        content: "Drop a PDF. An index card is written and bound inside the file. No account.",
+        content:
+          "Drop a PDF. You get the same file back with a 1 KB card inside. Free, no account, nothing stored.",
       },
     ],
   }),
@@ -17,8 +18,8 @@ export const Route = createFileRoute("/app")({
 
 function AppPage() {
   return (
-    <SiteShell brand="prefacio">
-      <PrefacioApp />
+    <SiteShell compact hideFooter>
+      <FrontmatterApp />
     </SiteShell>
   );
 }

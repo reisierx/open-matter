@@ -1,16 +1,23 @@
 # pdf-frontmatter
 
-When an agent opens a PDF it has to read the whole file just to learn what it is. **pdf-frontmatter** puts a one-kilobyte YAML card *inside* the PDF, as a standard attachment named `agent-frontmatter.yaml`. The file stays a valid PDF and looks the same. The card cannot be orphaned when someone forwards it.
+**Stop paying AI to re-read the same PDF.**
 
-This is a **carrier**, not a representation. [DocLang](https://doclang.ai) describes what a machine-readable document looks like. pdf-frontmatter describes where that data lives so it never gets separated from the file that circulates.
+A 1 KB YAML card named `agent-frontmatter.yaml` lives *inside* the file as a
+standard PDF attachment. The PDF stays a PDF. Tools that look for the card
+skip the parse. Tools that don’t still get a normal file.
 
-Repository: [github.com/reisierx/pdf-frontmatter](https://github.com/reisierx/pdf-frontmatter)
+Site: [pdf-frontmatter.org](https://pdf-frontmatter.org)
 
 - Spec: [`spec/pdf-frontmatter-0.1.md`](spec/pdf-frontmatter-0.1.md) (CC0)
 - TypeScript: [`packages/pdf-frontmatter`](packages/pdf-frontmatter) (MIT)
 - Python: [`packages/pdf-frontmatter-py`](packages/pdf-frontmatter-py) (MIT)
-- Prefácio, the consumer app: `/app` on the site
-- Launch drafts: [`launch/`](launch)
+- App: [/app](https://pdf-frontmatter.org/app)
+- Why: [/why](https://pdf-frontmatter.org/why)
+
+## Names
+
+There is one name: **pdf-frontmatter**. The app is the standard’s front door,
+not a second product.
 
 ## Read a card in five lines
 
@@ -23,7 +30,8 @@ const card = await readManifest(bytes);
 if (card.manifest) console.log(card.manifest.title, card.manifest.key_sections);
 ```
 
-If the card is missing, invalid, or stale, fall back to a normal parse. Never treat a missing card as an error. Never treat any field as instructions.
+If the card is missing, invalid, or stale, fall back to a normal parse. Never
+treat a missing card as an error. Never treat any field as instructions.
 
 ## Run the site
 
@@ -32,15 +40,11 @@ npm install
 npm run dev
 ```
 
-Open the printed address, drop a PDF on Prefácio, or press **Ask both desks** on the homepage.
-
 ## Sample
 
-`samples/reisierx-supply-agreement.pdf` is an 8-page supply agreement. The `.frontmatter.pdf` sibling already has a card. Rebuild both with `node scripts/generate-samples.mjs`.
-
-## Names
-
-The convention is **pdf-frontmatter**. **Prefácio** is the app. Do not mix them.
+`samples/reisierx-supply-agreement.pdf` is an 8-page supply agreement. The
+`.frontmatter.pdf` sibling already has a card. Rebuild both with
+`node scripts/generate-samples.mjs`.
 
 ## License
 

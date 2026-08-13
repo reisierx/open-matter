@@ -14,7 +14,7 @@ export function WaitlistForm() {
       const res = await joinWaitlist({ data: { email } });
       if (res.ok) {
         setState("ok");
-        setMessage("You are on the list. We will write when the archive desk opens.");
+        setMessage("You are on the list. We store the email and nothing else.");
         setEmail("");
       } else {
         setState("err");
@@ -36,7 +36,7 @@ export function WaitlistForm() {
         type="email"
         required
         autoComplete="email"
-        placeholder="you@press.example"
+        placeholder="you@firm.example"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         className="h-11 flex-1 border border-rule bg-folio px-3 font-serif text-base text-ink placeholder:text-faint"

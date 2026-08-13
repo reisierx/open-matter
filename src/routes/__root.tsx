@@ -16,7 +16,7 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "A one-kilobyte YAML card bound inside a PDF. Agents read it first. The document stays the document.",
+          "A 1 KB card inside the PDF. Written once. Tools that look for it skip the parse.",
       },
       { name: "apple-mobile-web-app-title", content: APP_NAME },
       { name: "theme-color", content: "#f3ede3" },
@@ -25,7 +25,7 @@ export const Route = createRootRoute({
       { property: "og:title", content: "pdf-frontmatter" },
       {
         property: "og:description",
-        content: "An index card, bound inside the PDF.",
+        content: "Stop paying AI to re-read the same PDF.",
       },
       ...(ogImage
         ? [

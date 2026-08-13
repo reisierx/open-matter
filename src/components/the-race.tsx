@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { estimateTokens, readManifest } from "pdf-frontmatter";
 import { extractPdfText } from "@/lib/pdf/extract-client";
+import { ASSUMPTIONS, formatMultiple, formatUsd } from "@/lib/savings";
 
 type Side = {
   label: string;
@@ -22,7 +23,11 @@ export function TheRace() {
   const [naked, setNaked] = useState<Side | null>(null);
   const [bound, setBound] = useState<Side | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [measured, setMeasured] = useState<{ full: number; card: number } | null>(null);
   const timers = useRef<number[]>([]);
+  const autoplayed = useRef(false);
+  const reduceMotion =
+    typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   useEffect(() => {
     let cancelled = false;
@@ -30,9 +35,7 @@ export function TheRace() {
       try {
         const [a, b] = await Promise.all([
           fetch("/samples/reisierx-supply-agreement.pdf").then((r) => r.arrayBuffer()),
-          fetch("/samples/reisierx-supply-agreement.frontmatter.pdf").then((r) =>
-            r.arrayBuffer(),
-          ),
+          fetch("/samples/reisierx-supply-agreement.frontmatter.pdf").then((r) => r.arrayBuffer()),
         ]);
         if (!cancelled) {
           setPlainBytes(new Uint8Array(a));
@@ -57,7 +60,7 @@ export function TheRace() {
     setRunning(true);
     setError(null);
     setNaked({
-      label: "Reading the whole file",
+      label: "Reading every page",
       tokens: 0,
       ms: 0,
       page: 0,
@@ -79,14 +82,12 @@ export function TheRace() {
     const extracted = await extractPdfText(plainBytes);
     const fullTokens = estimateTokens(extracted.text);
     const card = await readManifest(richBytes);
-    const cardYaml = card.yaml ?? "";
-    const cardTokens = estimateTokens(cardYaml || " ");
+    const cardTokens = estimateTokens(card.yaml || " ");
     const pages = extracted.pages || 8;
+    setMeasured({ full: fullTokens, card: cardTokens });
 
-    // Honest ingest costs, played out so a stranger can see them.
-    // Naked side reads ~fullTokens over ~2.4s; bound side reads the card in ~180ms.
-    const nakedDuration = 2400;
-    const boundDuration = 180;
+    const nakedDuration = reduceMotion ? 0 : 2400;
+    const boundDuration = reduceMotion ? 0 : 180;
     const tick = 32;
 
     const play = (ms: number, fn: () => void) => {
@@ -95,10 +96,10 @@ export function TheRace() {
     };
 
     for (let t = 0; t <= boundDuration; t += tick) {
-      const p = Math.min(1, t / boundDuration);
+      const p = Math.min(1, t / Math.max(1, boundDuration));
       play(t, () => {
         setBound({
-          label: "Reading agent-frontmatter.yaml",
+          label: "Reading the 1 KB card",
           tokens: Math.round(cardTokens * p),
           ms: Math.round(performance.now() - started),
           page: 0,
@@ -122,7 +123,7 @@ export function TheRace() {
     });
 
     for (let t = 0; t <= nakedDuration; t += tick) {
-      const p = Math.min(1, t / nakedDuration);
+      const p = Math.min(1, t / Math.max(1, nakedDuration));
       play(t, () => {
         setNaked({
           label: `Reading page ${Math.max(1, Math.ceil(p * pages))} of ${pages}`,
@@ -149,12 +150,20 @@ export function TheRace() {
     });
   }
 
+  useEffect(() => {
+    if (!ready || autoplayed.current) return;
+    autoplayed.current = true;
+    void run();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready]);
+
   const saved = useMemo(() => {
     if (!naked?.done || !bound?.done) return null;
-    return {
-      tokens: Math.max(0, naked.tokens - bound.tokens),
-      ms: Math.max(0, naked.ms - bound.ms),
-    };
+    const tokenMultiple = bound.tokens > 0 ? naked.tokens / bound.tokens : 0;
+    const speedMultiple = bound.ms > 0 ? naked.ms / bound.ms : 0;
+    const pct = naked.tokens > 0 ? (1 - bound.tokens / naked.tokens) * 100 : 0;
+    const usd = ((naked.tokens - bound.tokens) / 1_000_000) * ASSUMPTIONS.usdPerMillion;
+    return { tokenMultiple, speedMultiple, pct, usd };
   }, [naked, bound]);
 
   return (
@@ -164,18 +173,17 @@ export function TheRace() {
           <p className="text-xs tracking-[0.18em] text-oxblood uppercase">The race</p>
           <h2 className="mt-1 font-display text-2xl sm:text-3xl">Same question. Same file.</h2>
           <p className="mt-2 max-w-xl text-sm text-ink-soft">
-            An 8-page supply agreement. The left desk reads every page. The right desk
-            reads the bound card. Token counts are from the real file, four characters
-            to a token.
+            An 8-page supply agreement. One side reads every page. The other reads
+            the card inside. Token counts are measured from the real file.
           </p>
         </div>
         <button
           type="button"
           disabled={!ready || running}
-          onClick={run}
+          onClick={() => void run()}
           className="h-11 shrink-0 border border-oxblood bg-oxblood px-5 text-sm text-oxblood-ink hover:bg-oxblood-deep disabled:opacity-50"
         >
-          {running ? "Asking…" : ready ? "Ask both desks" : "Loading the file…"}
+          {running ? "Running…" : ready ? "Replay" : "Loading the file…"}
         </button>
       </div>
 
@@ -187,16 +195,16 @@ export function TheRace() {
 
       <div className="grid gap-0 md:grid-cols-2">
         <Desk
-          kicker="i  ·  as circulated"
-          title="Naked PDF"
+          kicker="i"
+          title="Plain PDF"
           side={naked}
-          empty="Eight pages, no card. An agent has to ingest the lot."
+          empty="Eight pages, no card. Every read pays the full parse."
         />
         <Desk
-          kicker="ii  ·  with a preface"
-          title="Enriched PDF"
+          kicker="ii"
+          title="With the card inside"
           side={bound}
-          empty="The same bytes, plus a 1 KB card named agent-frontmatter.yaml."
+          empty="The same file, plus a 1 KB card named agent-frontmatter.yaml."
           accent
         />
       </div>
@@ -204,18 +212,22 @@ export function TheRace() {
       <div className="border-t border-rule px-4 py-4 sm:px-6">
         {saved ? (
           <p className="font-display text-xl text-oxblood sm:text-2xl">
-            The preface saved {saved.tokens.toLocaleString("en-GB")} tokens and{" "}
-            {(saved.ms / 1000).toFixed(1)} seconds on this question.
+            {formatMultiple(saved.tokenMultiple)} fewer tokens ·{" "}
+            {formatMultiple(saved.speedMultiple)} faster · {Math.round(saved.pct)}% cheaper
+            per read, ≈{formatUsd(saved.usd)} saved on this document at $
+            {ASSUMPTIONS.usdPerMillion}/M input tokens
           </p>
         ) : (
           <p className="text-sm text-muted">
-            Press “Ask both desks”. The enriched side answers before the naked side
-            finishes reading.
+            Watch both sides. The card side answers first. Writing the card cost one
+            full read — this is the second.
           </p>
         )}
         <p className="mt-2 text-xs text-faint">
-          Estimate, not a billed API call. The ingest is paced so you can watch it;
-          the token numbers are measured from the sample.
+          Estimate, paced so you can watch it. Tokens are measured from the sample
+          ({measured ? `${measured.full} vs ${measured.card}` : "loading…"}), four
+          characters to a token. Tools that do not look for the card still read the
+          whole PDF.
         </p>
       </div>
     </div>
@@ -246,7 +258,9 @@ function Desk({
           <dl className="grid grid-cols-2 gap-3">
             <div>
               <dt className="text-xs text-muted">Tokens read</dt>
-              <dd className="font-display text-3xl tabular-nums">{side.tokens.toLocaleString("en-GB")}</dd>
+              <dd className="font-display text-3xl tabular-nums">
+                {side.tokens.toLocaleString("en-GB")}
+              </dd>
             </div>
             <div>
               <dt className="text-xs text-muted">Time</dt>
@@ -265,9 +279,7 @@ function Desk({
                 style={{
                   width: side.pages
                     ? `${Math.min(100, (side.page / side.pages) * 100)}%`
-                    : side.done
-                      ? "100%"
-                      : "40%",
+                    : "40%",
                 }}
               />
             </div>

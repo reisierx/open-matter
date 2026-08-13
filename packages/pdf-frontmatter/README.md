@@ -1,13 +1,16 @@
 # pdf-frontmatter
 
-Reference reader and writer for **pdf-frontmatter/0.1** — a one-kilobyte YAML card attached to a PDF so an agent can learn what the file is without opening a page.
+Reference reader and writer for **pdf-frontmatter/0.1** — a one-kilobyte YAML card attached to a PDF so a later read can skip the parse.
 
 The standard is vendor-neutral. This package is one implementation.
 
 ## Install
 
+Until v0.1.0 is on npm, use the package from this repo (`packages/pdf-frontmatter`).
+
 ```bash
-npm install pdf-frontmatter pdf-lib yaml
+# after publish
+npm install pdf-frontmatter
 ```
 
 ## Read a card in five lines

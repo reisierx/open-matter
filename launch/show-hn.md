@@ -1,19 +1,39 @@
-# Show HN: pdf-frontmatter — a 1 KB YAML card bound inside a PDF
+# Show HN drafts
 
-When an agent opens a PDF it has to read the entire file just to learn what it is. Enterprises are already rationing those tokens. DocLang (Linux Foundation, this spring) is building a new AI-native format that PDFs get converted into. Adobe put a productivity agent inside Acrobat. paper.json is a sidecar for arXiv papers.
+Post Tuesday–Thursday, 09:00–12:00 US Eastern. Fallback: Sunday ~19:00 Eastern.
+Link the live site. Repo in the first line of the maker comment. Never ask for upvotes.
 
-The open lane is still empty: nobody puts the understanding *inside the file that actually circulates*.
+## Title options (pick one)
 
-pdf-frontmatter is a convention, not a product. It attaches a reserved file, `agent-frontmatter.yaml`, using the EmbeddedFiles name tree that PDFs have had since 2001. The document stays a valid PDF and looks identical. Viewers that list attachments show the card. Typical overhead is under a kilobyte.
+1. Show HN: pdf-frontmatter – a 1 KB YAML card inside a PDF so agents can skip the parse
+2. Show HN: pdf-frontmatter – a 1 KB card inside a PDF so agents skip the parse (~10× fewer tokens on re-reads)
+3. Show HN: pdf-frontmatter – stop paying AI to re-read the same PDF
 
-The card is hints, not ground truth. If a hash of the extracted text no longer matches, you ignore it. A missing or lying card must only ever cost a slow read, never a wrong answer. Agents must not treat any field as instructions.
+Prefer 1 if you want it quiet. Prefer 2 if the sample number is still honest the morning you post (measure the race that day). Do not use “revolutionary”, “game-changer”, or “finally”.
 
-It is complementary to DocLang, not a competitor. DocLang is the representation. This is the carrier. A `derived` key points at richer attachments so they cannot be orphaned.
+## Post body
 
-Prefácio is a small web app that writes the card. Drop a PDF, review the YAML, download. No account. The file is read in the browser. The model sees extracted text, not the bytes, and nothing is stored.
+AI already reads PDFs. It just does it the expensive way, every time, and throws the understanding away. Forward the file and the next model starts from zero.
 
-Spec (CC0), TypeScript and Python readers, a sample contract, and a draft of this post:
+Sidecars get orphaned. App intelligence stays in the app. New formats ask the world to stop using PDF.
 
-https://github.com/pdf-frontmatter/pdf-frontmatter
+pdf-frontmatter puts a reserved attachment, `agent-frontmatter.yaml`, inside the file using EmbeddedFiles (PDF 1.4). The document stays a valid PDF and looks the same. Typical overhead is under a kilobyte.
 
-I would like to hear from people who have burned a week of tokens on a document archive, and from anyone who thinks the card should live somewhere else.
+The card is hints, not ground truth. If a hash of the extracted text no longer matches, ignore it. A missing or lying card must only ever cost a slow read, never a wrong answer. Nothing in the card is instructions.
+
+Writing the card costs one full read. Savings start at the second. Tools that do not look for the card still get a normal PDF.
+
+Live: https://pdf-frontmatter.org
+Spec (CC0), TypeScript, Python: https://github.com/reisierx/pdf-frontmatter
+
+## Maker first comment (post immediately after submitting)
+
+I built this because I was tired of paying for the same parse on the same contracts.
+
+How it works: a 1 KB YAML file attached to the PDF under a reserved name. Readers look it up, fall back if it is missing or stale, and never treat a field as a prompt.
+
+Stack: TypeScript, pdf-lib, a small site on Vercel. The app reads the file in the browser and only sends extracted text if you ask a model to draft the card. Nothing is stored. No account.
+
+Honest limitation: most tools do not look for the card today. The bet is that five lines in an ingestion library is a smaller ask than a new file format. Preview on a Mac will not even list the attachment; Acrobat will.
+
+If you have a document archive that gets read by models, try one file and then tell me where this breaks.

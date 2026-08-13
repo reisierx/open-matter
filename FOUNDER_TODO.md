@@ -1,86 +1,57 @@
 # What only you can do
 
-Numbered. One action each. Nothing here needs a terminal.
+Human steps. Nothing here needs a terminal.
 
-## 1. Make the code public — done
+## Done
 
-Public repository: [https://github.com/reisierx/pdf-frontmatter](https://github.com/reisierx/pdf-frontmatter)
+1. **Code is public** — [github.com/reisierx/pdf-frontmatter](https://github.com/reisierx/pdf-frontmatter)
+2. **Name** — `pdf-frontmatter.org` (bought 13 August 2026). One name. The app is `/app`. Do not buy a second brand.
+3. **Site is live** — [https://pdf-frontmatter.org](https://pdf-frontmatter.org) on Vercel Hobby.
+4. **Writing key** — `XAI_API_KEY` is in Vercel. If drafts stop, check the key and redeploy.
+5. **Empty personal repo** — deleted.
 
-On the **reisierx** organisation (the connection can write there). The empty personal repo at `goncalo-reisierx/pdf-frontmatter` can be deleted. In the repository settings, tick **Issues** if it is not already on, and leave the repo public.
+## Still yours
 
-## 2. Buy the names — done
+### Publish the packages (optional, before Show HN if you can)
 
-Bought **`pdf-frontmatter.org`** on 13 August 2026. One name. Prefácio lives at `https://pdf-frontmatter.org/app`. Do not buy `prefacio.app` unless the app later needs its own door.
-
-Registration was still “in progress” at purchase. Wait until the registrar shows the domain as active before changing DNS.
-
-## 3. Put the site on the internet — done
-
-Live at [https://pdf-frontmatter.org](https://pdf-frontmatter.org) as of 13 August 2026.
-
-Vercel Hobby, project `pdf-frontmatter`, from `reisierx/pdf-frontmatter`. Apex A record at GoDaddy. Prefácio is `https://pdf-frontmatter.org/app`.
-
-Do not turn on a paid Vercel plan until the site is slow.
-
-
-
-
-## 4. Give the writing desk a key
-
-Prefácio asks a language model to draft the card.
-
-1. Open [https://console.x.ai](https://console.x.ai)
-2. Create an API key.
-3. In Vercel → Project → Settings → Environment Variables, add:
-   - Name: `XAI_API_KEY`
-   - Value: the key
-   - Environment: Production (and Preview if you want drafts to work)
-4. Redeploy once.
-
-Keep the key off screenshots and off email. If it leaks, delete it in the xAI console and make a new one.
-
-Optional later, only if you change provider:
-
-- `LLM_PROVIDER` (`xai` or `openai`)
-- `LLM_MODEL` (default `grok-4.5`)
-- `LLM_BASE_URL`
-
-## 5. Approve money above €20
-
-You should not need to. The only likely bill is:
-
-- Domain names (about €10–15 each per year)
-- xAI usage, which stays small if the rate limit stays at 6 cards per 10 minutes
-
-If a host or a registrar asks for more than €20, stop and decide.
-
-## 6. Publish the packages (optional)
-
-The libraries are ready. Publishing them is a one-time account step.
+The site does not claim `npm install` / `pip install` until this is done.
 
 **npm**
 
-1. Create an account at [https://www.npmjs.com/signup](https://www.npmjs.com/signup)
-2. Tell the person helping you. They will run `npm publish` from `packages/pdf-frontmatter` after building.
+1. Account at [https://www.npmjs.com/signup](https://www.npmjs.com/signup)
+2. Tell the person helping you. They publish `packages/pdf-frontmatter`.
 3. The name `pdf-frontmatter` was free on 13 August 2026.
 
 **PyPI**
 
-1. Create an account at [https://pypi.org/account/register](https://pypi.org/account/register)
-2. Same: tell the person helping you. They will publish `packages/pdf-frontmatter-py`.
+1. Account at [https://pypi.org/account/register](https://pypi.org/account/register)
+2. Same: they publish `packages/pdf-frontmatter-py`.
 
-If you would rather not, leave them as folders in the GitHub repo. People can still copy them.
+Until then, people copy from the repo.
 
-## 7. Send the three letters
+### Record the race (30 seconds)
 
-Drafts are in the `launch` folder:
+The site plays the race. A screen capture is still useful for X and LinkedIn.
 
-1. `launch/show-hn.md` — post on Hacker News when the site is live. Paste, do not decorate.
-2. `launch/pdf-association.md` — email to the PDF Association. Find a contact on [pdfa.org](https://pdfa.org).
-3. `launch/paper-json.md` — email to the paper.json author, listed on [the arXiv page](https://arxiv.org/abs/2605.16194).
+1. Open [https://pdf-frontmatter.org](https://pdf-frontmatter.org) on a laptop
+2. Record ~30s horizontal (the two columns finishing)
+3. Record a vertical crop for stories
+4. Drop the files in `launch/` or just keep them on the desktop for posting day
 
-Change nothing that makes them louder.
+### Send the launch posts (when you are ready — not tonight)
 
-## 8. After launch, once
+Drafts in `launch/`:
 
-Reply to the first ten people who write. If someone asks for a batch desk, you already have the waitlist.
+1. `launch/show-hn.md` — Tuesday–Thursday, 09:00–12:00 US Eastern. Or Sunday ~19:00 Eastern. Paste. Do not decorate. First comment is in the same file. Never ask for upvotes.
+2. `launch/pdf-association.md` — email, find a contact on [pdfa.org](https://pdfa.org)
+3. `launch/paper-json.md` — email the paper.json author on [the arXiv page](https://arxiv.org/abs/2605.16194)
+
+Same day: the X / LinkedIn thread built on the race video.
+
+### Money
+
+Do not turn on a paid Vercel plan until the site is slow. Domain is ~€10–15/year. xAI stays small at 6 cards / 10 minutes. If anything asks for more than €20, stop.
+
+### After launch, once
+
+Reply to the first ten people who write. Batch interest goes on the waitlist.

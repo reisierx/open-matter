@@ -26,7 +26,7 @@ export const generateManifest = createServerFn({ method: "POST" })
       if (!gate.ok) {
         return {
           ok: false as const,
-          error: `This desk has written six cards in the last ten minutes. Wait ${gate.retryAfterSec} seconds, or write the YAML yourself.`,
+          error: `Six cards in the last ten minutes from this network. Wait ${gate.retryAfterSec} seconds, or write the YAML yourself.`,
         };
       }
     }
@@ -43,7 +43,7 @@ export const generateManifest = createServerFn({ method: "POST" })
       return {
         ok: false as const,
         error:
-          "The writing desk is not connected to a model in this environment. You can still paste or edit YAML by hand, then bind it.",
+          "A model is not connected in this environment. You can still write or paste YAML by hand, then attach it.",
       };
     }
 
