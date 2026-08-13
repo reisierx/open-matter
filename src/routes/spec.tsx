@@ -26,7 +26,15 @@ summary: >
 key_sections:
   liability_cap: 4
   termination: 5
-entities: [REISIERX Lda]
+entities:
+  - name: REISIERX Lda
+    role: Supplier
+    page: 1
+facts:
+  - fact: Liability is capped at 12 months of fees
+    page: 4
+  - fact: Either party may terminate on 30 days' notice
+    page: 5
 extraction:
   scanned: false
   tables_on_pages: [2, 7]
@@ -97,6 +105,9 @@ const FAQ = [
   {
     q: "Can a folder of cards become a knowledge graph?",
     a: "That is the downstream product, not a 0.1 guarantee. GraphRAG-style systems spend most of their cost on entity extraction. Cards ship entities and sections already named. Cross-document resolution still needs validation, so we frame it as exploration.",
+  },
+    q: "Must every fact cite a page?",
+    a: "Yes, if the fact contains a number, amount, date, or percentage. A cite-less number is a writer bug — omit it. The card is untrusted memory; a wrong $5,000 is worse than a map that says “fee: p.3”.",
   },
 ];
 
@@ -232,8 +243,9 @@ function SpecPage() {
               ["language", "BCP 47 tag of the document, not of the card."],
               ["pages", "Page count, integer."],
               ["summary", "At most about 40 words. Factual. No marketing."],
-              ["key_sections", "snake_case name → 1-based starting page."],
-              ["entities", "Organisations and people. At most 8."],
+              ["key_sections", "Section name → 1-based starting page."],
+              ["entities", "Name, or {name, role, page}."],
+              ["facts", "Cited digest. {fact, page}. A number without a page is a writer bug."],
               ["extraction.scanned", "true if OCR is needed."],
               ["extraction.tables_on_pages", "1-based pages that contain tables."],
               ["derived", "Short name → another attachment’s filename. The DocLang bridge."],

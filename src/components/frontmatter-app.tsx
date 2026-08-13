@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
+  citedFacts,
   contentSha256,
+  entityLabel,
+  entityName,
   estimateTokens,
   parseManifest,
   readManifest,
@@ -42,11 +45,13 @@ type FirstRead = { tokens: number; ms: number; pages: number };
 
 function fallbackQuestions(manifest: Manifest | null): string[] {
   const sections = Object.keys(manifest?.key_sections ?? {});
-  const entities = (manifest?.entities ?? []).slice(0, 2);
+  const entities = (manifest?.entities ?? []).map(entityName).filter(Boolean).slice(0, 2);
   const qs: string[] = [];
+  if (entities[0]) qs.push(`Who is ${entities[0]} in this document, and on which page?`);
+  if (citedFacts(manifest ?? { spec: "open-matter/0.1", title: "" }).length) {
+    qs.push("What money changes hands, how much, and on which page?");
+  }
   if (sections[0]) qs.push(`What does the “${sections[0].replaceAll("_", " ")}” section say, and on which page?`);
-  if (entities[0]) qs.push(`Who is ${entities[0]} in this document?`);
-  if (sections[1]) qs.push(`Where is “${sections[1].replaceAll("_", " ")}” and what does it cover?`);
   while (qs.length < 3) qs.push("What is this document, and who are the parties?");
   return qs.slice(0, 3);
 }
@@ -344,14 +349,13 @@ export function FrontmatterApp() {
     setMissed(false);
     setHint(null);
 
-    const target = pickPages(q, manifest, perPage, forcePages);
-    const askTokens = estimateTokens(yaml || " ") + estimateTokens(target.text || " ");
     const prior = firstRead ?? {
       tokens: estimateTokens(text),
       ms: 0,
       pages,
     };
     const started = performance.now();
+    const cardTokens = estimateTokens(yaml || " ");
 
     setPlain({
       tokens: prior.tokens,
@@ -360,26 +364,84 @@ export function FrontmatterApp() {
       answer: "",
       done: true,
     });
-    setCarded({ tokens: 0, ms: 0, label: "Reading the card…", answer: "", done: false });
+    setCarded({ tokens: cardTokens, ms: 0, label: "Reading the card…", answer: "", done: false });
 
     try {
-      const res = await answerFromCard({
-        data: { question: q, yaml, pageText: target.text, page: target.pages[0] ?? 0 },
-      });
-      const answer = res.ok ? res.answer : res.error;
-      const miss = Boolean(answer && looksLikeMiss(answer));
+      const forced = forcePages?.[0];
+      let hop = forced
+        ? await answerFromCard({
+            data: {
+              question: q,
+              yaml,
+              pageText: perPage[(forced ?? 1) - 1] || "",
+              page: forced,
+            },
+          })
+        : await answerFromCard({
+            data: { question: q, yaml },
+          });
+
+      if (!hop.ok) {
+        setMissed(true);
+        setCarded({
+          tokens: cardTokens,
+          ms: Math.round(performance.now() - started),
+          label: "From the card",
+          answer: hop.error,
+          done: true,
+        });
+        setPhase("verdict");
+        return;
+      }
+
+      let sent = cardTokens;
+      let label = "From the card";
+      if (!forced && hop.status === "need_page" && hop.needPage > 0) {
+        const n = hop.needPage;
+        const pageText = perPage[n - 1] || "";
+        sent += estimateTokens(pageText);
+        setCarded({
+          tokens: sent,
+          ms: Math.round(performance.now() - started),
+          label: `Opening page ${n}…`,
+          answer: "",
+          done: false,
+        });
+        hop = await answerFromCard({
+          data: { question: q, yaml, pageText, page: n },
+        });
+        label = `Card, then page ${n}`;
+        if (!hop.ok) {
+          setMissed(true);
+          setCarded({
+            tokens: sent,
+            ms: Math.round(performance.now() - started),
+            label,
+            answer: hop.error,
+            done: true,
+          });
+          setPhase("verdict");
+          return;
+        }
+      }
+
+      const miss = hop.status === "miss" || hop.status === "need_page";
       setMissed(miss);
-      setHint(answer ? hintFromAnswer(answer, manifest) : null);
+      if (miss && (hop.needPage || hop.page)) {
+        setHint({ section: "page", page: hop.needPage || hop.page });
+      } else if (miss) {
+        setHint(hintFromAnswer(hop.answer, manifest));
+      }
       setCarded({
-        tokens: askTokens,
+        tokens: sent,
         ms: Math.round(performance.now() - started),
-        label: "From the card",
-        answer: answer ?? "",
+        label: forced ? `Page ${forced}` : label,
+        answer: hop.answer,
         done: true,
       });
     } catch {
       setCarded({
-        tokens: askTokens,
+        tokens: cardTokens,
         ms: Math.round(performance.now() - started),
         label: "From the card",
         answer: "The question could not be asked. Try again.",
@@ -797,11 +859,18 @@ function SummaryCard({ manifest, pages }: { manifest: Manifest | null; pages: nu
       ) : null}
       {manifest.entities?.length ? (
         <p className="text-xs text-muted">
-          {manifest.entities
-            .map((e) => (typeof e === "string" ? e : String((e as { name?: string }).name ?? "")))
-            .filter(Boolean)
-            .join(" · ")}
+          {manifest.entities.map(entityLabel).filter(Boolean).join(" · ")}
         </p>
+      ) : null}
+      {citedFacts(manifest).length ? (
+        <ul className="space-y-1 text-sm text-ink-soft">
+          {citedFacts(manifest).slice(0, 8).map((f) => (
+            <li key={`${f.page}-${f.fact}`}>
+              {f.fact}
+              <span className="text-muted"> · p.{f.page || "?"}</span>
+            </li>
+          ))}
+        </ul>
       ) : null}
     </div>
   );

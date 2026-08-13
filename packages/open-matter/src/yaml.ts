@@ -32,6 +32,23 @@ export type Validation =
   | { ok: true; value: Manifest }
   | { ok: false; error: string };
 
+function normalizeFact(raw: unknown): { fact: string; page: number } | null {
+  if (typeof raw === "string") {
+    const m = raw.match(/^(.*?)(?:\s*[(\uFF08]\s*(?:page|p\.?)\s*(\d+)\s*[)\uFF09]\s*)?$/i);
+    const fact = (m?.[1] ?? raw).trim();
+    if (!fact) return null;
+    return { fact, page: m?.[2] ? Number(m[2]) : 0 };
+  }
+  if (raw && typeof raw === "object") {
+    const o = raw as Record<string, unknown>;
+    const fact = String(o.fact ?? o.text ?? o.value ?? "").trim();
+    if (!fact) return null;
+    const page = Number(o.page ?? o.p ?? 0);
+    return { fact, page: Number.isFinite(page) ? page : 0 };
+  }
+  return null;
+}
+
 /**
  * Validate a parsed object as an open-matter/0.1 manifest.
  * Unknown keys are kept. Only `spec` and `title` are required.
@@ -78,7 +95,14 @@ export function validateManifest(raw: unknown): Validation {
   }
 
   if (value.entities != null && !Array.isArray(value.entities)) {
-    return { ok: false, error: "If present, entities must be a list of names." };
+    return { ok: false, error: "If present, entities must be a list of names or name/role maps." };
+  }
+
+  if (value.facts != null) {
+    if (!Array.isArray(value.facts)) {
+      return { ok: false, error: "If present, facts must be a list." };
+    }
+    value.facts = value.facts.map(normalizeFact).filter((f): f is NonNullable<typeof f> => f != null);
   }
 
   if (

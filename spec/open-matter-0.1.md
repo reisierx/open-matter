@@ -50,10 +50,18 @@ pages: 40
 summary: >                       # max ~40 words, factual, no marketing
   Supply agreement between two parties; liability cap and
   termination terms are the sensitive clauses.
-key_sections:                    # snake_case name -> starting page (1-based)
+key_sections:                    # name -> starting page (1-based)
   liability_cap: 4
   termination: 5
-entities: [REISIERX Lda]         # organizations and people, max 8
+entities:
+  - name: REISIERX Lda
+    role: Supplier
+    page: 1
+facts:
+  - fact: Liability is capped at 12 months of fees
+    page: 4
+  - fact: Either party may terminate on 30 days' notice
+    page: 5
 extraction:
   scanned: false                 # true means OCR is needed
   tables_on_pages: [2, 7]
@@ -81,8 +89,9 @@ All other keys are optional. Tools that rewrite a card **must** preserve unknown
 | `language` | BCP 47 language tag of the document, not of the card. |
 | `pages` | Page count, integer, 1-based total. |
 | `summary` | At most about 40 words. Factual. No marketing. |
-| `key_sections` | Mapping of `snake_case` names to the 1-based starting page of that section. |
-| `entities` | Organisations and people. At most 8. |
+| `key_sections` | Mapping of section names to the 1-based starting page. Names may be human or `snake_case`. |
+| `entities` | Organisations and people. Each item is a string, or `{name, role, page}`. |
+| `facts` | Cited digest. Each item is `{fact, page}`. A number, amount, date, or percentage without a `page` is a writer bug — omit it. |
 | `extraction.scanned` | `true` if the file is a scan and OCR is needed. |
 | `extraction.tables_on_pages` | 1-based page numbers that contain tables. |
 | `derived` | Mapping of a short name to another attachment’s filename. This is how the convention cooperates with DocLang and friends. |

@@ -5,7 +5,8 @@
 - **Headline.** “Stop making AI re-read the same PDF.” Time and capability lead. Cost supports.
 - **Category copy.** Portable document memory / self-describing manifest. Not “cache” or “CDN”.
 - **Value display.** At least two of: multiple, percentage, money. Never a dollar figure below $1. Fleet calculator also shows hours. Break-even is read two.
-- **App race.** Optional after review (skip to download). Retrieval trusts `key_sections` names, not cover-page keywords. A miss offers “open that page” or “expand the card.” Plain lane never pretends to have answered.
+- **Card write.** Envelope stays tiny (`spec`, `title`, hash). The value is `facts: [{fact, page}]` plus typed entities. A number without a page is a writer bug.
+- **In-app test.** Consumer B: model sees the card first. If it needs a page, *it* names the page. We do not pick the page for it.
 - **Nav.** Home, App, Spec. One wordmark: open-matter.
 - **MCP.** `packages/mcp-open-matter`.
 - **GitHub.** `reisierx/open-matter`. The old `reisierx/pdf-frontmatter` repo is a pointer.

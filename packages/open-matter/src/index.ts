@@ -17,8 +17,14 @@ export {
   DOC_TYPES,
   type Manifest,
   type DocType,
+  type CitedFact,
+  type Entity,
+  type EntityObject,
   type ReadResult,
   type ReadStatus,
+  entityName,
+  entityLabel,
+  citedFacts,
 } from "./schema";
 export {
   parseYaml,

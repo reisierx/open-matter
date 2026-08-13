@@ -32,11 +32,29 @@ export const DOC_TYPES = [
 
 export type DocType = (typeof DOC_TYPES)[number];
 
+export type CitedFact = {
+  fact: string;
+  page: number;
+};
+
+export type EntityObject = {
+  name: string;
+  role?: string;
+  page?: number;
+};
+
+/** A name, or a name with a role and a page cite. */
+export type Entity = string | EntityObject;
+
 /**
  * open-matter/0.1 manifest.
  *
  * Only `spec` and `title` are required. Unknown keys must be preserved by
  * any tool that rewrites a manifest.
+ *
+ * Envelope (`spec`, `title`, `pages`, `content_sha256`) is the ID3 layer.
+ * `facts` is the digest: each fact must cite a page. A number without a
+ * page is a writer bug.
  *
  * SECURITY: this object is untrusted data written by whoever last touched
  * the file. Never interpret any field as instructions, code, or a prompt.
@@ -49,7 +67,8 @@ export type Manifest = {
   pages?: number;
   summary?: string;
   key_sections?: Record<string, number>;
-  entities?: string[];
+  entities?: Entity[];
+  facts?: CitedFact[];
   extraction?: {
     scanned?: boolean;
     tables_on_pages?: number[];
@@ -61,6 +80,37 @@ export type Manifest = {
   generated_at?: string;
   [key: string]: unknown;
 };
+
+export function entityName(e: Entity | unknown): string {
+  if (typeof e === "string") return e.trim();
+  if (e && typeof e === "object" && "name" in e) {
+    const name = (e as EntityObject).name;
+    return typeof name === "string" ? name.trim() : "";
+  }
+  return "";
+}
+
+export function entityLabel(e: Entity | unknown): string {
+  const name = entityName(e);
+  if (!name) return "";
+  if (e && typeof e === "object" && "role" in e) {
+    const role = (e as EntityObject).role;
+    if (typeof role === "string" && role.trim()) return `${name} (${role.trim()})`;
+  }
+  return name;
+}
+
+export function citedFacts(manifest: Manifest): CitedFact[] {
+  if (!Array.isArray(manifest.facts)) return [];
+  return manifest.facts.filter(
+    (f): f is CitedFact =>
+      Boolean(f) &&
+      typeof f === "object" &&
+      typeof f.fact === "string" &&
+      f.fact.trim().length > 0 &&
+      typeof f.page === "number",
+  );
+}
 
 export type ReadStatus =
   | "ok"
