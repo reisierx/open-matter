@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   contentSha256,
@@ -37,6 +37,8 @@ type Lane = {
   answer: string;
   done: boolean;
 };
+
+type FirstRead = { tokens: number; ms: number; pages: number };
 
 function fallbackQuestions(manifest: Manifest | null): string[] {
   const sections = Object.keys(manifest?.key_sections ?? {});
@@ -171,6 +173,15 @@ export function FrontmatterApp() {
   const [carded, setCarded] = useState<Lane | null>(null);
   const [missed, setMissed] = useState(false);
   const [hint, setHint] = useState<{ section: string; page: number } | null>(null);
+  const [firstRead, setFirstRead] = useState<FirstRead | null>(null);
+  const [writeElapsed, setWriteElapsed] = useState(0);
+
+  useEffect(() => {
+    if (phase !== "writing") return;
+    const t0 = performance.now();
+    const id = window.setInterval(() => setWriteElapsed(performance.now() - t0), 100);
+    return () => window.clearInterval(id);
+  }, [phase]);
 
   const validation = useMemo(() => (yaml.trim() ? parseManifest(yaml) : null), [yaml]);
   const manifest = validation?.ok ? validation.value : existing?.manifest ?? null;
@@ -190,6 +201,8 @@ export function FrontmatterApp() {
     setQuestion("");
     setMissed(false);
     setHint(null);
+    setFirstRead(null);
+    setWriteElapsed(0);
     if (file.type && file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
       setPhase("error");
       setError("That is not a PDF. Choose a file that ends in .pdf.");
@@ -215,6 +228,7 @@ export function FrontmatterApp() {
       if (card.yaml && card.manifest && !card.stale) {
         setYaml(card.yaml);
         setQuestions(fallbackQuestions(card.manifest));
+        setFirstRead({ tokens: estimateTokens(extracted.text), ms: 0, pages: extracted.pages });
         setPhase("has_card");
         setStep(2);
         return;
@@ -244,8 +258,15 @@ export function FrontmatterApp() {
     const usePages = opts?.extractedPages ?? pages;
     const useName = opts?.name ?? filename;
     const useExisting = opts?.existingYaml ?? existing?.yaml ?? yaml ?? undefined;
+    const writeTokens = estimateTokens(useText);
+    const isExpand = Boolean(opts?.focus);
+    if (!isExpand) {
+      setFirstRead({ tokens: writeTokens, ms: 0, pages: usePages });
+      setWriteElapsed(0);
+    }
     setPhase("writing");
     setError(null);
+    const started = performance.now();
     try {
       const res = await generateManifest({
         data: {
@@ -272,6 +293,9 @@ export function FrontmatterApp() {
       } else {
         setYaml(res.yaml);
         setQuestions(res.questions ?? fallbackQuestions(null));
+      }
+      if (!isExpand) {
+        setFirstRead({ tokens: writeTokens, ms: performance.now() - started, pages: usePages });
       }
       setPhase("review");
       setStep(2);
@@ -321,79 +345,49 @@ export function FrontmatterApp() {
     setHint(null);
 
     const target = pickPages(q, manifest, perPage, forcePages);
-    const pageLabel = target.pages.length ? target.pages.join(" and ") : "?";
-    const sectionLabel = target.section ? target.section.replaceAll("_", " ") : null;
-    const fullTokens = estimateTokens(text);
-    const cardTokens = estimateTokens(yaml || " ") + estimateTokens(target.text || " ");
-    const fullMs = Math.round(Math.max(400, pages * ASSUMPTIONS.secondsPerPage * 1000));
-    const cardMs = Math.round(ASSUMPTIONS.secondsPerCard * 1000);
+    const askTokens = estimateTokens(yaml || " ") + estimateTokens(target.text || " ");
+    const prior = firstRead ?? {
+      tokens: estimateTokens(text),
+      ms: 0,
+      pages,
+    };
     const started = performance.now();
 
-    setPlain({ tokens: 0, ms: 0, label: `Reading page 1 of ${pages || 1}`, answer: "", done: false });
-    setCarded({ tokens: 0, ms: 0, label: "Reading the card", answer: "", done: false });
-
-    const play = (ms: number, fn: () => void) => {
-      const id = window.setTimeout(fn, ms);
-      timers.current.push(id);
-    };
-
-    const tick = 40;
-    for (let t = 0; t <= cardMs; t += tick) {
-      const p = Math.min(1, t / Math.max(1, cardMs));
-      play(t, () => {
-        setCarded({
-          tokens: Math.round(cardTokens * p),
-          ms: Math.round(performance.now() - started),
-          label: sectionLabel ? `${sectionLabel} · p.${pageLabel}` : `Card → page ${pageLabel}`,
-          answer: "",
-          done: false,
-        });
-      });
-    }
-
-    const askPromise = answerFromCard({
-      data: { question: q, yaml, pageText: target.text, page: target.pages[0] ?? 0 },
+    setPlain({
+      tokens: prior.tokens,
+      ms: prior.ms,
+      label: prior.pages ? `${prior.pages} pages` : "First read",
+      answer: "",
+      done: true,
     });
+    setCarded({ tokens: 0, ms: 0, label: "Reading the card…", answer: "", done: false });
 
-    play(cardMs + 10, () => {
-      void (async () => {
-        const res = await askPromise;
-        const answer = res.ok ? res.answer : res.error;
-        const miss = Boolean(answer && looksLikeMiss(answer));
-        setMissed(miss);
-        setHint(answer ? hintFromAnswer(answer, manifest) : null);
-        setCarded({
-          tokens: cardTokens,
-          ms: Math.round(performance.now() - started),
-          label: sectionLabel ? `${sectionLabel} · p.${pageLabel}` : `Opened page ${pageLabel}`,
-          answer: answer ?? "",
-          done: true,
-        });
-      })();
-    });
-
-    for (let t = 0; t <= fullMs; t += tick) {
-      const p = Math.min(1, t / Math.max(1, fullMs));
-      play(t, () => {
-        setPlain({
-          tokens: Math.round(fullTokens * p),
-          ms: Math.round(performance.now() - started),
-          label: `Reading page ${Math.max(1, Math.ceil(p * (pages || 1)))} of ${pages || 1}`,
-          answer: "",
-          done: false,
-        });
+    try {
+      const res = await answerFromCard({
+        data: { question: q, yaml, pageText: target.text, page: target.pages[0] ?? 0 },
       });
-    }
-    play(fullMs + 30, () => {
-      setPlain({
-        tokens: fullTokens,
-        ms: fullMs,
-        label: "Whole file, counted from your pages",
-        answer: "",
+      const answer = res.ok ? res.answer : res.error;
+      const miss = Boolean(answer && looksLikeMiss(answer));
+      setMissed(miss);
+      setHint(answer ? hintFromAnswer(answer, manifest) : null);
+      setCarded({
+        tokens: askTokens,
+        ms: Math.round(performance.now() - started),
+        label: "From the card",
+        answer: answer ?? "",
         done: true,
       });
-      setPhase("verdict");
-    });
+    } catch {
+      setCarded({
+        tokens: askTokens,
+        ms: Math.round(performance.now() - started),
+        label: "From the card",
+        answer: "The question could not be asked. Try again.",
+        done: true,
+      });
+      setMissed(true);
+    }
+    setPhase("verdict");
   }
 
   async function attachAndDownload() {
@@ -455,6 +449,8 @@ export function FrontmatterApp() {
     setCarded(null);
     setMissed(false);
     setHint(null);
+    setFirstRead(null);
+    setWriteElapsed(0);
   }
 
   return (
@@ -485,7 +481,10 @@ export function FrontmatterApp() {
             <Status title={`Reading${pages ? ` ${pages} pages` : ""}…`} body={filename} />
           ) : null}
           {phase === "writing" ? (
-            <Status title="Writing the card…" body="A frontier model is listing what this file is." />
+            <Status
+              title="Reading the file to write the card…"
+              body={`${firstRead?.pages || pages || "—"} pages · ${(firstRead?.tokens ?? 0).toLocaleString("en-GB")} tokens · ${(writeElapsed / 1000).toFixed(1)}s`}
+            />
           ) : null}
           {phase === "binding" ? <Status title="Attaching the card…" body={filename} /> : null}
 
@@ -502,6 +501,7 @@ export function FrontmatterApp() {
               setYaml={setYaml}
               validation={validation}
               error={error}
+              firstRead={firstRead}
               onBack={reset}
               onRegenerate={() => void draftCard()}
               onContinue={goAsk}
@@ -526,10 +526,9 @@ export function FrontmatterApp() {
               plain={plain}
               carded={carded}
               finished={phase === "verdict"}
-              verdict={verdict}
-              error={error}
               missed={missed}
               hint={hint}
+              firstRead={firstRead}
               onDownload={() => void attachAndDownload()}
               onAsk={() => {
                 setPhase("ask");
@@ -668,6 +667,7 @@ function Review({
   setYaml,
   validation,
   error,
+  firstRead,
   onBack,
   onRegenerate,
   onContinue,
@@ -684,6 +684,7 @@ function Review({
   setYaml: (v: string) => void;
   validation: ReturnType<typeof parseManifest> | null;
   error: string | null;
+  firstRead: FirstRead | null;
   onBack: () => void;
   onRegenerate: () => void;
   onContinue: () => void;
@@ -703,6 +704,16 @@ function Review({
         {error ? (
           <p className="mt-2 text-sm text-warn" role="alert">
             {error}
+          </p>
+        ) : null}
+        {firstRead && firstRead.tokens > 0 ? (
+          <p className="mt-2 text-sm text-ink-soft">
+            First read:{" "}
+            <span className="text-ink">
+              {firstRead.tokens.toLocaleString("en-GB")} tokens
+              {firstRead.ms > 0 ? ` · ${(firstRead.ms / 1000).toFixed(1)}s` : ""}
+              {firstRead.pages ? ` · ${firstRead.pages} pages` : ""}
+            </span>
           </p>
         ) : null}
       </div>
@@ -859,10 +870,9 @@ function RaceOnFile({
   plain,
   carded,
   finished,
-  verdict,
-  error,
   missed,
   hint,
+  firstRead,
   onDownload,
   onAsk,
   onRetryHint,
@@ -872,31 +882,27 @@ function RaceOnFile({
   plain: Lane | null;
   carded: Lane | null;
   finished: boolean;
-  verdict: ReturnType<typeof documentVerdict>;
-  error: string | null;
   missed: boolean;
   hint: { section: string; page: number } | null;
+  firstRead: FirstRead | null;
   onDownload: () => void;
   onAsk: () => void;
   onRetryHint?: () => void;
   onExpand: () => void;
 }) {
+  const priorTokens = firstRead?.tokens || plain?.tokens || 0;
+  const priorMs = firstRead?.ms || plain?.ms || 0;
+  const nowTokens = carded?.tokens || 0;
+  const nowMs = carded?.ms || 0;
+  const tokenX = nowTokens > 0 ? priorTokens / nowTokens : 0;
+  const timeX = nowMs > 0 && priorMs > 0 ? priorMs / nowMs : 0;
+
   return (
     <div className="min-h-0 overflow-y-auto">
       <p className="font-serif text-sm italic">“{question}”</p>
-      {error ? (
-        <p className="mt-2 text-sm text-warn" role="alert">
-          {error}
-        </p>
-      ) : null}
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
-        <LaneView
-          kicker="i"
-          title="Whole file"
-          lane={plain}
-          note="Counted from your pages. Not sent to a model."
-        />
-        <LaneView kicker="ii" title="Card + mapped page" lane={carded} accent />
+        <LaneView kicker="i" title="First read" lane={plain} />
+        <LaneView kicker="ii" title="This question" lane={carded} accent />
       </div>
       {finished ? (
         <div className="mt-4">
@@ -918,8 +924,18 @@ function RaceOnFile({
             </>
           ) : (
             <>
-              <p className="font-display text-xl text-oxblood">{verdictPrimary(verdict)}</p>
-              {verdict.moneyLine ? <p className="mt-1 text-sm text-ink-soft">{verdict.moneyLine}</p> : null}
+              <p className="font-display text-xl text-oxblood">
+                {nowTokens.toLocaleString("en-GB")} tokens · {(nowMs / 1000).toFixed(1)}s
+                {tokenX >= 1.5
+                  ? ` · ${tokenX >= 10 ? Math.round(tokenX) : tokenX.toFixed(1)}× fewer tokens`
+                  : ""}
+                {timeX >= 1.3 ? ` · ${timeX.toFixed(1)}× faster` : ""}
+              </p>
+              <p className="mt-1 text-sm text-ink-soft">
+                First read was {priorTokens.toLocaleString("en-GB")} tokens
+                {priorMs > 0 ? ` in ${(priorMs / 1000).toFixed(1)}s` : ""}. The next
+                question skips that.
+              </p>
             </>
           )}
           <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
@@ -981,7 +997,7 @@ function LaneView({
         <>
           <p className="mt-2 text-xs text-ink-soft">{lane.label}</p>
           <p className="font-display text-2xl tabular-nums">{lane.tokens.toLocaleString("en-GB")}</p>
-          <p className="text-xs text-muted">{(lane.ms / 1000).toFixed(2)}s</p>
+          {lane.ms > 0 ? <p className="text-xs text-muted">{(lane.ms / 1000).toFixed(1)}s</p> : null}
           {lane.done && lane.answer ? <p className="mt-2 text-sm text-ink-soft">{lane.answer}</p> : null}
           {note ? <p className="mt-2 text-xs text-faint">{note}</p> : null}
         </>

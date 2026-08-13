@@ -117,24 +117,39 @@ function Home() {
         </p>
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           <Enable
+            n="i"
             title="Small models can finish the job"
-            body="Long documents lose small models in the middle. A 3B model given a pre-digested card has beaten a frontier model still hunting through raw pages. Write once with a large model; a local 8B reads it forever."
+            lead="Write the card once with a frontier model."
+            body="A 3B model given that card has beaten a frontier model still hunting through raw pages."
+            proof="Lost in the Middle · SLM survey · DeRetSyn"
           />
           <Enable
+            n="ii"
             title="Open the right page first"
-            body="Metadata-filtered retrieval lifts precision by about 15%, and quality nearly 2×, because the agent stops guessing which chunk matters. The card is that filter: document, then page, then tokens."
+            lead="Filter before you guess."
+            body="Metadata-filtered retrieval lifts precision by about 15%, and quality nearly 2×. The card is that filter."
+            proof="Deasy Labs · Two-Step RAG"
           />
           <Enable
+            n="iii"
             title="Decide before you load"
-            body="Claude Skills route on ~100-token descriptions. Eight skills cost ~500 tokens at startup instead of 70,000. Agents read this card the same way: one kilobyte to decide whether to open the file."
+            lead="One kilobyte to know whether to open the file."
+            body="Claude Skills route on ~100-token descriptions. Eight skills cost ~500 tokens at startup instead of 70,000."
+            proof="SKILL.md / AGENTS.md"
           />
           <Enable
-            title="Know when the memory is stale"
-            body="Agent-memory systems name staleness as an open problem. A content hash on the card is cache-validity: if the pages changed, the understanding is void. Signed cards are next, C2PA-adjacent."
+            n="iv"
+            title="Know when memory is stale"
+            lead="A content hash is cache-validity for agents."
+            body="If the pages changed, the understanding is void. Signed cards are next."
+            proof="Mem0 staleness · C2PA 2.3"
           />
           <Enable
+            n="v"
             title="A folder becomes a graph"
-            body="Entity extraction is the expensive step in every GraphRAG pipeline. Cards ship it pre-computed. Documents as nodes, shared names as edges. Coming — exploration, not guaranteed truth."
+            lead="Entities and sections, already named."
+            body="The expensive GraphRAG step ships pre-computed. Documents as nodes, shared names as edges."
+            proof="Coming — exploration, not guaranteed truth"
             coming
           />
         </div>
@@ -213,14 +228,31 @@ function Home() {
   );
 }
 
-function Enable({ title, body, coming }: { title: string; body: string; coming?: boolean }) {
+function Enable({
+  n,
+  title,
+  lead,
+  body,
+  proof,
+  coming,
+}: {
+  n: string;
+  title: string;
+  lead: string;
+  body: string;
+  proof: string;
+  coming?: boolean;
+}) {
   return (
     <div className="border border-rule bg-folio p-5">
-      {coming ? (
-        <p className="text-xs tracking-[0.16em] text-muted uppercase">Coming</p>
-      ) : null}
-      <h3 className="font-display text-xl">{title}</h3>
-      <p className="mt-2 text-sm text-ink-soft">{body}</p>
+      <p className="text-xs tracking-[0.16em] text-oxblood uppercase">
+        {coming ? "Coming" : n}
+      </p>
+      <h3 className="mt-2 font-display text-xl">{title}</h3>
+      <p className="mt-2 text-sm text-ink-soft">
+        <strong className="font-medium text-ink">{lead}</strong> {body}
+      </p>
+      <p className="mt-3 font-serif text-sm italic text-muted">{proof}</p>
     </div>
   );
 }
