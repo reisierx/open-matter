@@ -3,6 +3,7 @@ import { Folio, SiteShell } from "@/components/site-shell";
 import { TheRace } from "@/components/the-race";
 import { SavingsCalculator } from "@/components/savings-calculator";
 import { FileFlip } from "@/components/file-flip";
+import { WaitlistForm } from "@/components/waitlist-form";
 
 export const Route = createFileRoute("/")({
   component: Home,
