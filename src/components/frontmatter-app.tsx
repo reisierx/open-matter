@@ -54,20 +54,89 @@ function fallbackQuestions(manifest: Manifest | null): string[] {
   return qs.slice(0, 3);
 }
 
-function pickPage(question: string, manifest: Manifest | null, perPage: string[]): { page: number; text: string } {
+const STOP = new Set([
+  "what",
+  "which",
+  "where",
+  "when",
+  "does",
+  "did",
+  "the",
+  "this",
+  "that",
+  "from",
+  "with",
+  "have",
+  "been",
+  "were",
+  "their",
+  "about",
+  "into",
+  "than",
+  "then",
+  "your",
+  "they",
+  "them",
+  "and",
+  "for",
+  "are",
+  "was",
+  "how",
+  "who",
+  "its",
+  "not",
+]);
+
+function words(s: string): string[] {
+  return s
+    .toLowerCase()
+    .split(/[^a-z0-9%]+/)
+    .filter((w) => w.length > 2 && !STOP.has(w));
+}
+
+/** Use the card's section map, then pick the page(s) whose text actually matches the question. */
+function pickPages(
+  question: string,
+  manifest: Manifest | null,
+  perPage: string[],
+): { pages: number[]; text: string } {
+  const qWords = words(question);
   const sections = Object.entries(manifest?.key_sections ?? {});
-  const q = question.toLowerCase();
-  let page = 0;
+  const sectionPages = new Map<number, string>();
   for (const [name, p] of sections) {
-    if (q.includes(name.replaceAll("_", " ")) || q.includes(name)) {
-      page = Number(p) || 0;
-      break;
-    }
+    const page = Number(p) || 0;
+    if (page > 0) sectionPages.set(page, name);
   }
-  if (!page && sections[0]) page = Number(sections[0][1]) || 0;
-  if (!page) page = 1;
-  const text = perPage[page - 1] || perPage.slice(0, 2).join("\n\n") || "";
-  return { page, text };
+
+  const scored = perPage.map((text, i) => {
+    const page = i + 1;
+    const hay = `${sectionPages.get(page)?.replaceAll("_", " ") ?? ""} ${text}`.toLowerCase();
+    let score = 0;
+    for (const w of qWords) {
+      if (hay.includes(w)) score += 1;
+    }
+    if (sectionPages.has(page)) score += 0.5;
+    const name = sectionPages.get(page);
+    if (name) {
+      for (const part of name.split("_")) {
+        if (part.length > 2 && question.toLowerCase().includes(part)) score += 2;
+      }
+    }
+    return { page, score };
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+  const best = scored[0]?.score ?? 0;
+  let chosen = scored.filter((s) => s.score > 0 && s.score >= best - 0.5).slice(0, 2);
+  if (!chosen.length) {
+    const fallback = [...sectionPages.keys()][0] || 1;
+    chosen = [{ page: fallback, score: 0 }];
+  }
+  const pages = chosen.map((c) => c.page);
+  const text = pages
+    .map((p) => `--- page ${p} ---\n${perPage[p - 1] || ""}`)
+    .join("\n\n");
+  return { pages, text };
 }
 
 export function FrontmatterApp() {
@@ -238,7 +307,8 @@ export function FrontmatterApp() {
     const fullMs = Math.round(Math.max(400, pages * ASSUMPTIONS.secondsPerPage * 1000));
     const cardMs = Math.round(ASSUMPTIONS.secondsPerCard * 1000);
     const started = performance.now();
-    const target = pickPage(q, manifest, perPage);
+    const target = pickPages(q, manifest, perPage);
+    const pageLabel = target.pages.length ? target.pages.join(" and ") : "?";
 
     setPlain({ tokens: 0, ms: 0, label: `Reading page 1 of ${pages || 1}`, answer: "", done: false });
     setCarded({ tokens: 0, ms: 0, label: "Reading the card", answer: "", done: false });
@@ -255,7 +325,7 @@ export function FrontmatterApp() {
         setCarded({
           tokens: Math.round(cardTokens * p),
           ms: Math.round(performance.now() - started),
-          label: target.page ? `Card → page ${target.page}` : "Reading the card",
+          label: target.pages.length ? `Card → page ${pageLabel}` : "Reading the card",
           answer: "",
           done: false,
         });
@@ -263,7 +333,7 @@ export function FrontmatterApp() {
     }
 
     const askPromise = answerFromCard({
-      data: { question: q, yaml, pageText: target.text, page: target.page },
+      data: { question: q, yaml, pageText: target.text, page: target.pages[0] ?? 0 },
     });
 
     play(cardMs + 10, () => {
@@ -272,7 +342,7 @@ export function FrontmatterApp() {
         setCarded({
           tokens: cardTokens,
           ms: Math.round(performance.now() - started),
-          label: target.page ? `Answered from page ${target.page}` : "Card read",
+          label: target.pages.length ? `Answered from page ${pageLabel}` : "Card read",
           answer: res.ok ? res.answer : res.error,
           done: true,
         });
