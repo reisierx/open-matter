@@ -13,7 +13,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "A 1 KB card inside the file. PDF first. Then other formats. A frontier model writes it once; every later read skips the parse.",
+          "A 1 KB card written on a read you were already doing. It stays inside the file. PDF first.",
       },
       { property: "og:title", content: "Stop making AI re-read the same file." },
       {
@@ -32,9 +32,9 @@ function Home() {
           Stop making AI re-read the same <FileFlip />
         </h1>
         <p className="lede mt-4 max-w-2xl text-lg">
-          A small card travels inside the file: what it is, the facts that
-          matter, where to look. PDF ships now. The convention is bigger than
-          one format. Write once; every later model skips the parse.
+          The card is written on a read you were already doing. It stays
+          inside the file: what it is, the facts that matter, where to look.
+          The next model skips the parse. PDF first.
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
           <Link
@@ -74,8 +74,8 @@ function Home() {
           {[
             {
               n: "i",
-              title: "A frontier model reads the file once",
-              body: "It writes a small card: what this file is, the facts that matter, and which page they live on. That is the only expensive step.",
+              title: "Your agent was going to read it anyway",
+              body: "On the way out it writes a small card: what this file is, the facts that matter, which page they live on. Marginal cost: a few hundred tokens. Not a second paid parse.",
             },
             {
               n: "ii",
@@ -166,11 +166,11 @@ function Home() {
             cta="Install for Claude"
           />
           <Audience
-            kicker="You sit on a pile"
-            title="Pay the first read once."
-            body="Funds, chambers, insurers, public records. Every later desk reads the card. The file still looks the same in court."
-            href="#waitlist"
-            cta="Join the batch list"
+            kicker="You issue the file"
+            title="Mark it for other people’s machines."
+            body="You wrote it. You card it. Same shape as schema.org. Readers who want the digest can take it. Readers who don’t still have a normal file."
+            href="/spec"
+            cta="Read the spec"
           />
           <Audience
             kicker="You run small models"
@@ -242,13 +242,13 @@ function Home() {
 
       <Folio className="pt-16 sm:pt-20">
         <div id="waitlist">
-          <p className="kicker">Coming</p>
+          <p className="kicker">Later</p>
           <h2 className="mt-3 font-display text-3xl sm:text-4xl">
-            Batch enrichment for whole archives
+            Cards on files you are already ingesting
           </h2>
           <p className="lede">
-            Point it at a folder. Get every file back with a card. PDF first.
-            We store the email and nothing else.
+            Not a prepaid pass over a cold archive. If you already run a
+            pipeline, the card can be exhaust there too. Leave an email.
           </p>
           <WaitlistForm />
         </div>

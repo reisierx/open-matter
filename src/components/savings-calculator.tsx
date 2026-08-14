@@ -17,7 +17,7 @@ export function SavingsCalculator() {
   return (
     <div>
       <p className="kicker">Your numbers</p>
-      <h2 className="mt-3 font-display text-3xl sm:text-4xl">What it costs your archive</h2>
+      <h2 className="mt-3 font-display text-3xl sm:text-4xl">What a second read costs</h2>
       <p className="mt-2 max-w-2xl text-sm text-ink-soft">
         Writing each card costs one full read. Value starts at the second read.
         Time is wall-clock ingest, not billed tokens.
@@ -63,7 +63,7 @@ export function SavingsCalculator() {
           hash="waitlist"
           className="mt-5 inline-flex h-11 items-center border border-oxblood bg-oxblood px-5 text-sm text-oxblood-ink no-underline hover:bg-oxblood-deep hover:text-oxblood-ink"
         >
-          Get this for your archive
+          Leave an email if you already ingest files
         </Link>
       </div>
     </div>
