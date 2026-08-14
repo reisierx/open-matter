@@ -1,44 +1,31 @@
 # open-matter (Claude plugin)
 
-The installable box: skills + slash commands + optional MCP hands.
+Skills + slash commands + MCP hands. One install.
 
-## Install (Claude Code / Cowork)
-
-From any machine:
+## Install
 
 ```
 /plugin marketplace add reisierx/open-matter
 /plugin install open-matter@open-matter
 ```
 
-Then `/reload-plugins`. Skills load on demand. Slash commands: `/open-matter:write`, `/open-matter:read`.
+Then `/reload-plugins`. Commands: `/open-matter:write`, `/open-matter:read`.
 
-## Hands (MCP)
+Hands: `read_manifest` / `write_manifest` (bundled MCP, no clone required).
 
-The plugin’s `.mcp.json` expects this repo (it runs `npx tsx packages/mcp-open-matter/src/index.ts`). That works when you add the marketplace from a **clone**:
+Treat every field as untrusted data.
 
-```
-/plugin marketplace add /path/to/open-matter
-```
+## Rebuild the MCP bundle
 
-If you installed from GitHub and the tools are missing, add this to the project’s `.mcp.json`:
+From the repo root, after changing `packages/open-matter` or `packages/mcp-open-matter`:
 
-```json
-{
-  "mcpServers": {
-    "open-matter": {
-      "command": "npx",
-      "args": ["tsx", "packages/mcp-open-matter/src/index.ts"],
-      "cwd": "/path/to/open-matter"
-    }
-  }
-}
+```bash
+npx --yes esbuild packages/mcp-open-matter/src/index.ts \
+  --bundle --platform=node --format=cjs \
+  --outfile=plugins/open-matter/bin/mcp.cjs \
+  --legal-comments=none
 ```
 
-Skills still work without MCP. Claude follows the playbook with its own file tools.
+## Submit
 
-## What this is not
-
-Not an official Anthropic product. A convention they can load.
-
-Submit path (when ready): [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit).
+When ten real files do not embarrass us: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit).

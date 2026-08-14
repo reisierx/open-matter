@@ -795,9 +795,9 @@ function Idle({
     <div>
       <h1 className="font-display text-4xl sm:text-5xl">Drop a PDF.</h1>
       <p className="mt-3 max-w-md text-ink-soft">
-        A frontier model writes a card. An evaluation written from the pages — not
-        from the card — has to pass. Then you download the same file with the
-        card inside.
+        A frontier model writes a card on this read. An evaluation written
+        from the pages — not from the card — has to pass. Then you download
+        the same file with the card inside.
       </p>
       <div
         onDragOver={(e) => {

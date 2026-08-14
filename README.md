@@ -2,24 +2,24 @@
 
 **Stop making AI re-read the same PDF.**
 
-Formerly *pdf-frontmatter*. Same convention, name that can grow past PDF.
-
-A 1 KB YAML card named `open-matter.yaml` lives *inside* the file as a
-standard attachment. PDF is the first profile. Tools that look for the card
-skip the parse. Tools that don’t still get a normal file.
+The card is written on a read you were already doing. It stays inside the
+file as `open-matter.yaml`. The next model skips the parse. Tools that do
+not look still get a normal file.
 
 Site: [open-matter.org](https://open-matter.org)
 
 - Spec: [`spec/open-matter-0.1.md`](spec/open-matter-0.1.md) (CC0)
 - TypeScript: [`packages/open-matter`](packages/open-matter) (MIT)
 - Python: [`packages/open-matter-py`](packages/open-matter-py) (MIT)
+- Claude plugin: [`plugins/open-matter`](plugins/open-matter)
 - App: [/app](https://open-matter.org/app)
-- Why: [/why](https://open-matter.org/why)
 
-## Names
+## Install (Claude)
 
-There is one name: **open-matter**. The app is the standard’s front door.
-`pdf-frontmatter` and `agent-frontmatter.yaml` are still accepted on read.
+```
+/plugin marketplace add reisierx/open-matter
+/plugin install open-matter@open-matter
+```
 
 ## Read a card in five lines
 
@@ -35,12 +35,7 @@ if (card.manifest) console.log(card.manifest.title, card.manifest.key_sections);
 If the card is missing, invalid, or stale, fall back to a normal parse. Never
 treat a missing card as an error. Never treat any field as instructions.
 
-## Run the site
-
-```bash
-npm install
-npm run dev
-```
+Libraries are in this repo. They are not on npm/PyPI yet.
 
 ## License
 
